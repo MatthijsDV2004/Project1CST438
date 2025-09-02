@@ -1,8 +1,11 @@
 import { Stack } from "expo-router";
 import { SQLiteProvider, type SQLiteDatabase } from "expo-sqlite";
 import { useEffect } from "react";
-
+import { installBcryptRandom } from "../src/crypto-polyfill";
 export default function RootLayout() {
+  useEffect(() => {
+    installBcryptRandom(); // <-- important: runs once on app mount
+  }, []);
   return (
     <SQLiteProvider databaseName="app.db" onInit={migrateDbIfNeeded}>
       <Stack screenOptions={{ headerShown: false }} />

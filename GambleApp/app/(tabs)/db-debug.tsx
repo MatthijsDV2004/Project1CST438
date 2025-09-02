@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
-import { createUser, verifyLogin } from "../src/auth";
-import { setUserData, getUserData } from "../src/userData";
+import { createUser, verifyLogin } from "../../src/auth";
+import { setUserData, getUserData } from "../../src/userData";
 
 type Line = { ok: boolean; msg: string };
 

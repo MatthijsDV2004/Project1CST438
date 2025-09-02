@@ -66,7 +66,7 @@ export default function HomeScreen() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <Link href={"../debug/db"} asChild>
+        <Link href={"../db-debug"} asChild>
         <Button title="Open DB Test" />
       </Link>
         <ThemedText>
