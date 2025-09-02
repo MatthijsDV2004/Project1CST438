@@ -9,9 +9,14 @@ export async function all<T>(db: SQLiteDatabase, sql: string, ...params: any[]):
   return db.getAllAsync<T>(sql, ...params);
 }
 
-export async function get<T>(db: SQLiteDatabase, sql: string, ...params: any[]): Promise<T | undefined> {
+export async function get<T>(
+  db: SQLiteDatabase,
+  sql: string,
+  ...params: any[]
+): Promise<T | undefined> {
   try {
-     await db.getFirstAsync<T>(sql, ...params);
+    const row = await db.getFirstAsync<T>(sql, ...params);
+    return row ?? undefined;
   } catch {
     return undefined;
   }
