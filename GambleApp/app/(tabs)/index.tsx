@@ -1,12 +1,13 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Button} from 'react-native';
-
+import { useRouter } from 'expo-router';
+import { Platform, StyleSheet, Button, Pressable} from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -20,6 +21,7 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Login or create your account!</ThemedText>
         <ThemedText>
@@ -31,12 +33,14 @@ export default function HomeScreen() {
           to register now.
         </ThemedText>
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 2: Pick your sport!</ThemedText>
         <ThemedText>
           {`Find your favorite sports and players using the search bar.`}
         </ThemedText>
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 3: Place yours bets!</ThemedText>
         <ThemedText>
@@ -46,15 +50,24 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">Good luck!</ThemedText>
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-      <Button
-        title="Login"
-        //onPress={() => Alert.alert("Button pressed!")}
-      />
-      </ThemedView>
 
+      <Pressable onPress={() => router.push("/explore")}>
+        <ThemedView style={styles.button}>
+          <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
+            Proceed to login
+          </ThemedText>
+        </ThemedView>
+      </Pressable>
 
-      
+      <ThemedText>
+        {`No account? Register Now!`}
+      </ThemedText>
+      <Pressable onPress={() => router.push("/explore")}>
+        <ThemedText type="defaultSemiBold" style={{ color: "#6b6b6b", textDecorationLine: "underline" }}>
+          Register here
+        </ThemedText>
+      </Pressable>
+
     </ParallaxScrollView>
   );
 }
@@ -68,6 +81,13 @@ const styles = StyleSheet.create({
   stepContainer: {
     gap: 8,
     marginBottom: 8,
+  },
+  button: {
+    marginTop: 14,
+    backgroundColor: '#4f46e5',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
   },
   reactLogo: {
     height: 178,
