@@ -16,7 +16,13 @@
     "preset": "jest-expo",
     "reporters": [
       "default",
-      ["jest-junit", { "outputDirectory": "reports/jest", "outputName": "junit.xml" }]
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "reports/jest",
+          "outputName": "junit.xml"
+        }
+      ]
     ]
   },
   "dependencies": {
@@ -65,6 +71,7 @@
     "jest": "~29.7.0",
     "jest-expo": "~53.0.10",
     "jest-junit": "^16.0.0",
+    "junit-viewer": "^4.11.1",
     "typescript": "~5.8.3"
   },
   "private": true
