@@ -1,7 +1,6 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, View, Button} from 'react-native';
-import { Link } from "expo-router";
-
+import { useRouter, Link } from 'expo-router';
+import { Platform, StyleSheet, Button, Pressable, View} from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -11,6 +10,8 @@ import { useEffect } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const db = useSQLiteContext();
 
   useEffect(() => {
@@ -43,39 +44,55 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+        <ThemedText type="subtitle">Step 1: Login or create your account!</ThemedText>
         <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
+          If you already have an account: enter your <ThemedText type="defaultSemiBold">username</ThemedText> and <ThemedText type="defaultSemiBold">password</ThemedText>. 
+          If you do not have an account, press{' '}
           <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
+            'Create Account'
           </ThemedText>{' '}
-          to open developer tools.
+          to register now.
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
 
-
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Step 2: Pick your sport!</ThemedText>
         <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+          {`Find your favorite sports and players using the search bar.`}
         </ThemedText>
       </ThemedView>
+
+      <ThemedView style={styles.stepContainer}>
+
+        <ThemedText type="subtitle">Step 3: Place yours bets!</ThemedText>
+
+        <ThemedText>
+          {`When you're feeling confident,`}
+          <ThemedText type="defaultSemiBold"> place your chosen bet </ThemedText>amounts on your favorite players, keep an eye on your{' '}
+          <ThemedText type="defaultSemiBold">bets</ThemedText>, and{' '}
+          <ThemedText type="defaultSemiBold">Good luck!</ThemedText>
+        </ThemedText>
+      </ThemedView>
+
+      <Pressable onPress={() => router.push("/explore")}>
+        <ThemedView style={styles.button}>
+          <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
+            Proceed to login
+          </ThemedText>
+        </ThemedView>
+      </Pressable>
+
+      <ThemedText>
+        {`No account? Register Now!`}
+      </ThemedText>
+      <Pressable onPress={() => router.push("/explore")}>
+        <ThemedText type="defaultSemiBold" style={{ color: "#6b6b6b", textDecorationLine: "underline" }}>
+          Register here
+        </ThemedText>
+      </Pressable>
+
     </ParallaxScrollView>
   );
 }
@@ -89,6 +106,13 @@ const styles = StyleSheet.create({
   stepContainer: {
     gap: 8,
     marginBottom: 8,
+  },
+  button: {
+    marginTop: 14,
+    backgroundColor: '#4f46e5',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
   },
   reactLogo: {
     height: 178,
