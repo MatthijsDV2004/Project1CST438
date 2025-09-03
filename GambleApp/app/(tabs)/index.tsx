@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Button} from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -40,13 +40,21 @@ export default function HomeScreen() {
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 3: Place yours bets!</ThemedText>
         <ThemedText>
-          {`When you're feeling confident, `}
-          <ThemedText type="defaultSemiBold">place your chosen bet amounts</ThemedText>{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> and{' '}
+          {`When you're feeling confident,`}
+          <ThemedText type="defaultSemiBold"> place your chosen bet </ThemedText>amounts on your favorite players, keep an eye on your{' '}
+          <ThemedText type="defaultSemiBold">bets</ThemedText>, and{' '}
           <ThemedText type="defaultSemiBold">Good luck!</ThemedText>
         </ThemedText>
       </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+      <Button
+        title="Login"
+        //onPress={() => Alert.alert("Button pressed!")}
+      />
+      </ThemedView>
+
+
+      
     </ParallaxScrollView>
   );
 }
