@@ -27,7 +27,7 @@ jobs:
         run: npm ci   # if you don't commit a lockfile, switch this to: npm install
 
       - name: Run Jest (CI)
-        run: npm test -- --ci
+        run: npm run test:ci:hard
 
       - name: Publish test report to Checks/Tests
         if: always()

@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "test:ci": "jest --ci",
+    "test:ci": "jest --ci --runInBand --detectOpenHandles",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
+    "test:ci:hard": "jest --ci --runInBand --detectOpenHandles --forceExit",
     "lint": "expo lint"
   },
   "jest": {
