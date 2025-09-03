@@ -1,7 +1,12 @@
 name: Tests
 on:
-  pull_request:
   push:
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: GambleApp   # ← run all commands in the app folder
 
 jobs:
   test:
@@ -11,17 +16,30 @@ jobs:
       checks: write
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+          cache-dependency-path: GambleApp/package-lock.json  # ← point to the lockfile
+
+      - name: Install deps
+        run: npm ci   # if you don't commit a lockfile, switch this to: npm install
+
       - name: Run Jest (CI)
         run: npm test -- --ci
+
       - name: Publish test report to Checks/Tests
         if: always()
         uses: dorny/test-reporter@v1
         with:
           name: Jest Tests
-          path: reports/jest/junit.xml
+          path: GambleApp/reports/jest/junit.xml   # ← match where jest-junit writes
           reporter: jest-junit
+
+      - name: Upload JUnit XML (downloadable artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-junit
+          path: GambleApp/reports/jest/junit.xml
