@@ -17,7 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Run Jest (CI)
-        run: npm run test:ci
+        run: npm test -- --ci
       - name: Publish test report to Checks/Tests
         if: always()
         uses: dorny/test-reporter@v1
