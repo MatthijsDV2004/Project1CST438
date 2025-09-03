@@ -321,3 +321,4 @@ const styles = StyleSheet.create({
   footerText: { textAlign: 'center', color: '#6b7280', marginTop: 12 },
   link: { color: '#4f46e5', fontWeight: '600' },
 });
+

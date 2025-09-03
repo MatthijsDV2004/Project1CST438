@@ -1,12 +1,35 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View, Button} from 'react-native';
+import { Link } from "expo-router";
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
+import { useEffect } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+
 export default function HomeScreen() {
+  const db = useSQLiteContext();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const v = await db.getFirstAsync<{ v: string }>("select sqlite_version() as v");
+        const uv = await db.getFirstAsync<{ user_version: number }>("pragma user_version");
+        const tables = await db.getAllAsync<{ name: string }>(
+          "select name from sqlite_master where type='table' order by name"
+        );
+        console.log("SQLite version:", v?.v);
+        console.log("Schema version (user_version):", uv?.user_version);
+        console.log("Tables:", tables.map(t => t.name));
+        // Expect: users, user_data  (and a few SQLite internals)
+      } catch (e) {
+        console.error("DB smoke test failed:", e);
+      }
+    })();
+  }, [db]);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -43,6 +66,8 @@ export default function HomeScreen() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
+
+
         <ThemedText>
           {`When you're ready, run `}
           <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
