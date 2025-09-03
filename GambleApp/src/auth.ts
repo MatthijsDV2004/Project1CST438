@@ -4,11 +4,10 @@ import { getOrCreatePepper } from "./secure";
 import { get, run } from "../src/db";
 
 const COST = 12;
-
 function withPepper(password: string, pepper: string) {
   return `${password}:${pepper}`;
 }
-
+// Creates user. Adds pepper(secret from a key converted to hash), salt(random value), and hash.
 export async function createUser(db: SQLiteDatabase, username: string, password: string) {
   const pepper = await getOrCreatePepper();
   const salt = await bcrypt.genSalt(COST);
@@ -23,6 +22,7 @@ export async function createUser(db: SQLiteDatabase, username: string, password:
     now
   );
 }
+// Verifies password for login. Converts password into hash + salt/pepper and cross examines in DB.
 
 export async function verifyLogin(db: SQLiteDatabase, username: string, password: string) {
   const row = await get<{ id: number; password_hash: string }>(

@@ -1,0 +1,27 @@
+name: Tests
+on:
+  pull_request:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Run Jest (CI)
+        run: npm run test:ci
+      - name: Publish test report to Checks/Tests
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Jest Tests
+          path: reports/jest/junit.xml
+          reporter: jest-junit

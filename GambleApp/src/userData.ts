@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 import { get, run } from "./db";
-
+//This will likely change but just a placeholder for user data.
 export async function setUserData(db: SQLiteDatabase, userId: number, data: unknown) {
   const json = JSON.stringify(data);
   await run(

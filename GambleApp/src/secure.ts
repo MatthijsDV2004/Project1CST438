@@ -2,7 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import * as Crypto from "expo-crypto";
 
 const PEPPER_KEY = "app_pepper_v1";
-
+// All this is for security for the password(Hash) adds pepper.
 function bytesToHex(bytes: Uint8Array): string {
   let out = "";
   for (let i = 0; i < bytes.length; i++) {
