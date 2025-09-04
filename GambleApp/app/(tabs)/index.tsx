@@ -76,7 +76,7 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
 
-      <Pressable onPress={() => router.push("/explore")}>
+      <Pressable onPress={() => router.push("/login")}>
         <ThemedView style={styles.button}>
           <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
             Proceed to login
