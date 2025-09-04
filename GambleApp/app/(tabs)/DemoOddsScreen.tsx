@@ -17,8 +17,10 @@ export default function DemoOddsScreen() {
       const allMatches = await fetchMatchOdds(SPORTS[sportIndex]);
       const nextMatches = allMatches.slice(startIndex, startIndex + PAGE_SIZE);
       setMatches(nextMatches);
-    } catch (err) {
-      console.error("Error fetching odds:", err);
+    } catch (err: any) {
+      console.error("Error fetching odds FULL:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+      console.error("Axios error config:", err.config);
+      console.error("Axios error request:", err.request);
     } finally {
       setLoading(false);
     }

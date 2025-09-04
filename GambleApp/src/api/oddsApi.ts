@@ -30,25 +30,32 @@ export interface MatchOdds {
 const apiKey = "a5a3890ed6a31559c2e31ab7a467382b";
 //Must put own api key above to work properly^
 
-const oddsApi = axios.create({
-  baseURL: "https://api.the-odds-api.com/v4",
-  params: {
-    apiKey: apiKey,
-  },
-});
 
-export const fetchMatchOdds = async (sportKey: string): Promise<MatchOdds[]> => {
-  const response = await oddsApi.get<MatchOdds[]>(
-    `/sports/${sportKey}/odds`,
-    {
-      params: {
-        regions: "us",
-        markets: "h2h",
-        oddsFormat: "decimal",
-      },
-    }
-  );
-  return response.data;
-};
+  const oddsApi = axios.create({
+    baseURL: "https://api.the-odds-api.com/v4",
+  });
+  // ensure apiKey is always present (merging params)
+  oddsApi.interceptors.request.use((config) => {
+    config.params = { apiKey, ...(config.params || {}) };
+    const query = new URLSearchParams(config.params as Record<string, string>).toString();
+  const fullUrl = `${config.baseURL}${config.url}?${query}`;
+
+  console.log("➡️ Fetching:", fullUrl);
+    return config;
+  });
+
+  export const fetchMatchOdds = async (sportKey: string): Promise<MatchOdds[]> => {
+    const response = await oddsApi.get<MatchOdds[]>(
+      `/sports/${sportKey}/odds`,
+      {
+        params: {
+          regions: "us",
+          markets: "h2h",
+          oddsFormat: "decimal",
+        },
+      }
+    );
+    return response.data;
+  };
 
 export default oddsApi;
