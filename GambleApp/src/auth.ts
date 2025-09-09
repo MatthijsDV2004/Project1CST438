@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import type { SQLiteDatabase } from "expo-sqlite";
 import { getOrCreatePepper } from "./secure";
 import { get, run } from "../src/db";
+import * as Crypto from 'expo-crypto';
+import * as Random from 'expo-random';
 
 const COST = 12;
 function withPepper(password: string, pepper: string) {
@@ -35,4 +37,47 @@ export async function verifyLogin(db: SQLiteDatabase, username: string, password
   const pepper = await getOrCreatePepper();
   const ok = await bcrypt.compare(withPepper(password, pepper), row.password_hash);
   return ok ? { ok: true as const, userId: row.id } : { ok: false as const, reason: "bad_credentials" };
+}
+function toHex(bytes: Uint8Array) {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+export type RegisterInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
+
+export async function registerUser(db: SQLiteDatabase, input: RegisterInput) {
+  const email = input.email.trim().toLowerCase();
+
+  // Enforce unique email at the app level (DB also enforces UNIQUE)
+  const existing = await db.getFirstAsync<{ id: number }>(
+    'SELECT id FROM users WHERE email = ?',
+    [email]
+  );
+  if (existing) {
+    const err = new Error('EMAIL_IN_USE');
+    // @ts-expect-error add a code
+    (err.code = 'EMAIL_IN_USE');
+    throw err;
+  }
+
+  const saltBytes = await Crypto.getRandomBytesAsync(16);
+  const salt = toHex(saltBytes);
+
+  const password_hash = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    `${salt}:${input.password}`
+  );
+
+  const res = await db.runAsync(
+    `INSERT INTO users (first_name, last_name, email, password_hash, password_salt)
+     VALUES (?, ?, ?, ?, ?)`,
+    [input.firstName.trim(), input.lastName.trim(), email, password_hash, salt]
+  );
+
+  // Optionally: return the new user id
+  return { id: Number(res.lastInsertRowId) };
 }

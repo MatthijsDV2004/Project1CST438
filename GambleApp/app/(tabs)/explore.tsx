@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
-
+import { useRouter } from 'expo-router';
+import { useSQLiteContext } from 'expo-sqlite';
+import { registerUser } from '../../src/auth';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -29,7 +31,8 @@ export default function TabTwoScreen() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const db = useSQLiteContext();        
+  const router = useRouter(); 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
@@ -75,11 +78,24 @@ export default function TabTwoScreen() {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      await new Promise(r => setTimeout(r, 1200)); // simulate API
-      console.log('Registered:', formData);
-      Alert.alert('Success', 'Account created successfully!');
-    } catch (e) {
-      Alert.alert('Error', 'Registration failed. Please try again.');
+      await registerUser(db, {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      Alert.alert('Success', 'Account created successfully!', [
+        { text: 'OK', onPress: () => router.replace('/') }, // go Home
+      ]);
+    } catch (e: any) {
+      const code = e?.code || e?.message;
+      if (code === 'EMAIL_IN_USE' || code === 'SQLITE_CONSTRAINT') {
+        setErrors(prev => ({ ...prev, email: 'Email already in use' }));
+        Alert.alert('Email in use', 'Try signing in with that address.');
+      } else {
+        Alert.alert('Error', 'Registration failed. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }

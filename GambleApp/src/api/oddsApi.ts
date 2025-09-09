@@ -1,4 +1,5 @@
 import axios from "axios";
+// require('dotenv').config();
 //must install axios pkg on own device.
 
 export interface Outcome {
@@ -27,7 +28,7 @@ export interface MatchOdds {
   bookmakers: Bookmaker[];
 }
 
-const apiKey = "a5a3890ed6a31559c2e31ab7a467382b";
+const apiKey = process.env.EXPO_PUBLIC_API_KEY;
 //Must put own api key above to work properly^
 
 
