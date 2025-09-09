@@ -15,7 +15,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-//Used figma to Create a design for the Sign Up Page
+//Used figma to Create a design for the Log In Page
 
 export default function TabTwoScreen() {
   const [formData, setFormData] = useState({
