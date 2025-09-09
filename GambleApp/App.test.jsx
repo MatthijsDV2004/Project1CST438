@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import RootLayout from '../GambleApp/app/_layout';
+import TabTwoScreen from '../GambleApp/app/(tabs)/explore';
 
 it('renders the app root without crashing', () => {
-  const tree = render(<RootLayout />);
+  const tree = render(<TabTwoScreen />);
   expect(tree.toJSON()).toBeTruthy();
 });
