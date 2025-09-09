@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet } from "react-native";
 import { fetchMatchOdds, MatchOdds } from "../../src/api/oddsApi";
 
-const SPORTS = ["soccer_epl", "basketball_nba"]; // toggle between two sports
+const SPO RTS = ["soccer_epl", "basketball_nba"]; // toggle between two sports
 const PAGE_SIZE = 5;
 
 export default function DemoOddsScreen() {
@@ -19,7 +19,7 @@ export default function DemoOddsScreen() {
       setMatches(nextMatches);
     } catch (err: any) {
       console.error("Error fetching odds FULL:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-      console.error("Axios error config:", err.confi g);
+      console.error("Axios error config:", err.config);
       console.error("Axios error request:", err.request);
     } finally {
       setLoading(false);
