@@ -1,37 +1,49 @@
-name: CI
+name: Tests
 
 on:
-  pull_request:
-    branches: [ main, develop ]
   push:
-    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: GambleApp   # 👈 change this if your app is in another folder
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
 
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: npm
+          cache-dependency-path: GambleApp/package-lock.json  # 👈 lockfile location
 
       - name: Install deps
-        run: npm ci
+        run: npm ci   # if no lockfile committed, switch this to `npm install`
 
-      # Optional: runs Expo project checks (won't fail your build if not installed)
-      - name: Expo Doctor (optional)
-        run: npx expo-doctor || true
+      - name: Run Jest (CI)
+        run: npm run test:ci:hard   # 👈 add this script in package.json if you don’t have it
 
-      - name: Type check (optional)
-        run: npm run typecheck --if-present
+      - name: Publish test report to Checks/Tests
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Jest Tests
+          path: GambleApp/reports/jest/junit.xml   # 👈 matches jest-junit output
+          reporter: jest-junit
 
-      - name: Lint (optional)
-        run: npm run lint --if-present
-
-      - name: Unit tests
-        run: npm test -- --ci
+      - name: Upload JUnit XML (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-junit
+          path: GambleApp/reports/jest/junit.xml
