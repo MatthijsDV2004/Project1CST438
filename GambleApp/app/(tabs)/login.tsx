@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useRouter, Link } from 'expo-router';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 
@@ -18,6 +19,7 @@ import { ThemedView } from '@/components/ThemedView';
 //Used figma to Create a design for the Log In Page
 
 export default function TabTwoScreen() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -130,22 +132,7 @@ export default function TabTwoScreen() {
             </Pressable>
           </View>
 
-          {!!formData.password && (
-            <View style={styles.strengthRow}>
-              <View style={styles.strengthBg}>
-                <View style={[styles.strengthFill, { width: `${pwStrength.pct}%` }]} />
-              </View>
-              <Text style={styles.strengthLabel}>{pwStrength.label}</Text>
-            </View>
-          )}
           {!!errors.password && <Text style={styles.error}>{errors.password}</Text>}
-        </View>
-
-        {/* Terms */}
-        <View style={styles.notice}>
-          <Text style={styles.noticeText}>
-            By creating an account, you agree to our Terms of Service and Privacy Policy.
-          </Text>
         </View>
 
         {/* Submit */}
@@ -163,8 +150,8 @@ export default function TabTwoScreen() {
 
         <Text style={styles.footerText}>
           Don't have an account?{' '}
-          <Text style={styles.link} onPress={() => Alert.alert('Navigate', 'Go to sign in')}>
-            Sign up
+          <Text style={styles.link} onPress={() => router.push("/explore")}>
+            Register here
           </Text>
         </Text>
       </View>

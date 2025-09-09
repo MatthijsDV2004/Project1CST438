@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useRouter, Link } from 'expo-router';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 
@@ -18,6 +19,7 @@ import { ThemedView } from '@/components/ThemedView';
 //Used figma to Create a design for the Sign Up Page
 
 export default function TabTwoScreen() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -232,7 +234,7 @@ export default function TabTwoScreen() {
 
         <Text style={styles.footerText}>
           Already have an account?{' '}
-          <Text style={styles.link} onPress={() => Alert.alert('Navigate', 'Go to sign in')}>
+          <Text style={styles.link} onPress={() => router.push("/login")}>
             Sign in
           </Text>
         </Text>
