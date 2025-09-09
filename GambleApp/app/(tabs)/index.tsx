@@ -36,17 +36,18 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+        source={require('../../assets/images/stadium.webp')}
+        style={[styles.headerImage, { width: 500, height: 300 }]}
+        contentFit="cover"
+      />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Welcome to BetURLife!</ThemedText>
         <HelloWave />
       </ThemedView>
       
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Login or create your account!</ThemedText>
+        <ThemedText type="subtitle">Login or create your account!</ThemedText>
         <ThemedText>
           If you already have an account: enter your <ThemedText type="defaultSemiBold">username</ThemedText> and <ThemedText type="defaultSemiBold">password</ThemedText>. 
           If you do not have an account, press{' '}
@@ -54,25 +55,6 @@ export default function HomeScreen() {
             'Create Account'
           </ThemedText>{' '}
           to register now.
-        </ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Pick your sport!</ThemedText>
-        <ThemedText>
-          {`Find your favorite sports and players using the search bar.`}
-        </ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.stepContainer}>
-
-        <ThemedText type="subtitle">Step 3: Place yours bets!</ThemedText>
-
-        <ThemedText>
-          {`When you're feeling confident,`}
-          <ThemedText type="defaultSemiBold"> place your chosen bet </ThemedText>amounts on your favorite players, keep an eye on your{' '}
-          <ThemedText type="defaultSemiBold">bets</ThemedText>, and{' '}
-          <ThemedText type="defaultSemiBold">Good luck!</ThemedText>
         </ThemedText>
       </ThemedView>
 
@@ -98,6 +80,8 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerImage: { alignSelf: 'center' },
+
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
