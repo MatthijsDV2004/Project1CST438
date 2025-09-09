@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
+    "export:expo": "expo export --platform ios,android --output-dir dist",
     "start": "expo start",
     "test:ci": "jest --ci --runInBand --detectOpenHandles",
     "reset-project": "node ./scripts/reset-project.js",
