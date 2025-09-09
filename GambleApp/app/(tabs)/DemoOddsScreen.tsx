@@ -19,7 +19,7 @@ export default function DemoOddsScreen() {
       setMatches(nextMatches);
     } catch (err: any) {
       console.error("Error fetching odds FULL:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-      console.error("Axios error config:", err.config);
+      console.error("Axios error config:", err.confi g);
       console.error("Axios error request:", err.request);
     } finally {
       setLoading(false);
