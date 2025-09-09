@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import App from '../GambleApp/App';
+import RootLayout from '../GambleApp/app/_layouts';
 
 it('renders the app root without crashing', () => {
-  const tree = render(<App />);
+  const tree = render(<RootLayout />);
   expect(tree.toJSON()).toBeTruthy();
-});w
+});
