@@ -3,7 +3,7 @@ import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet } from "rea
 import { fetchMatchOdds, MatchOdds } from "../../src/api/oddsApi";
 
 const SPORTS = ["soccer_epl", "basketball_nba"]; // toggle between two sports
-const PAGE_SIZ E = 5;
+const PAGE_SIZE = 5;
 
 export default function DemoOddsScreen() {
   const [matches, setMatches] = useState<MatchOdds[]>([]);
