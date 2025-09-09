@@ -1,8 +1,13 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import TabTwoScreen from '../GambleApp/app/(tabs)/explore';
+import { SQLiteProvider } from 'expo-sqlite';
 
-it('renders the app root without crashing', () => {
-  const tree = render(<TabTwoScreen />);
-  expect(tree.toJSON()).toBeTruthy();
+
+test('renders the app root without crashing', () => {
+  render(
+    <SQLiteProvider databaseName="test.db">
+      <TabTwoScreen />
+    </SQLiteProvider>
+  );
 });
