@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useRouter, Link } from 'expo-router';
-import { Platform, StyleSheet, Button, Pressable, View} from 'react-native';
+import { Text, Platform, StyleSheet, Button, Pressable, View} from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -48,6 +48,17 @@ export default function HomeScreen() {
       
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Login or create your account!</ThemedText>
+
+        
+        {/* This block is testing */}
+        <Pressable onPress={async () => {
+  const rows = await db.getAllAsync("SELECT * FROM users");
+  alert(JSON.stringify(rows, null, 2));
+}}>
+  <Text>Show Users</Text>
+</Pressable>
+
+
         <ThemedText>
           If you already have an account: enter your <ThemedText type="defaultSemiBold">username</ThemedText> and <ThemedText type="defaultSemiBold">password</ThemedText>. 
           If you do not have an account, press{' '}
