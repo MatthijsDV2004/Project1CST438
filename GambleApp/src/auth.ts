@@ -3,7 +3,7 @@ import type { SQLiteDatabase } from "expo-sqlite";
 import { getOrCreatePepper } from "./secure";
 import { get, run } from "../src/db";
 import * as Crypto from 'expo-crypto';
-import * as Random from 'expo-random';
+// import * as Random from 'expo-random';
 
 const COST = 12;
 function withPepper(password: string, pepper: string) {
