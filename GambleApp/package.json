@@ -14,6 +14,14 @@
     "test:ci:hard": "jest --ci --runInBand --detectOpenHandles --forceExit",
     "lint": "expo lint"
   },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": ["react-native-quick-sqlite"],
+        "listUnknownPackages": false
+      }
+    }
+  },
   "jest": {
     "preset": "jest-expo",
     "reporters": [

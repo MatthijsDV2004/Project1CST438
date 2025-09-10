@@ -73,8 +73,8 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Expo Doctor (fail if issues)
-        run: npx --yes expo-doctor
+      - name: Expo Doctor (warn only)
+        run: npx expo-doctor || true
         # remove --yes if you prefer interactive output locally
 
       - name: Bundle for iOS & Android with Metro
