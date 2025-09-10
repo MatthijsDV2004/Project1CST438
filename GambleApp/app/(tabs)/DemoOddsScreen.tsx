@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, FlatList, ActivityIndicator, StyleSheet } from "react-native";
-import { fetchMatchOdds, MatchOdds } from "../src/api/oddsApi";
+import { fetchMatchOdds, MatchOdds } from "../../src/api/oddsApi";
 
 const SPORTS = ["soccer_epl", "basketball_nba"]; // toggle between two sports
 const PAGE_SIZE = 5;
