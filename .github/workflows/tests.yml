@@ -80,7 +80,7 @@ jobs:
       - name: Bundle for iOS & Android with Metro
         run: |
           npx expo export \
-            --platform all \
+            --platform android \
             --output-dir dist \
             --dump-sourcemap \
             --non-interactive
