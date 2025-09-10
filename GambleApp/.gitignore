@@ -79,4 +79,6 @@ ios/
 *.aab
 *.ipa
 
+
 expo-env.d.ts
+
