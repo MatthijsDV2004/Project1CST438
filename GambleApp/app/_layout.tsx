@@ -35,7 +35,7 @@ async function onInit(db: SQLiteDatabase) {
   `);
 }
 
-export default function RootLayout() {
+export default fun ction RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
