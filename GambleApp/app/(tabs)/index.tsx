@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
 import { useRouter, Link } from 'expo-router';
-import { Platform, StyleSheet, Button, Pressable, View} from 'react-native';
+import { Text, Platform, StyleSheet, Button, Pressable, View} from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import  ClearUsersButton  from '@/components/ClearUsersButton';
 
 import { useEffect } from "react";
 import { useSQLiteContext } from "expo-sqlite";
@@ -36,17 +37,29 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
+        source={require('../../assets/images/stadium.webp')}
+        style={[styles.headerImage, { width: 500, height: 300 }]}
+        contentFit="cover"
+      />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Welcome to BetURLife!</ThemedText>
         <HelloWave />
       </ThemedView>
       
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Login or create your account!</ThemedText>
+        <ThemedText type="subtitle">Login or create your account!</ThemedText>
+
+        <ClearUsersButton></ClearUsersButton>
+        {/* This block is testing */}
+        <Pressable onPress={async () => {
+  const rows = await db.getAllAsync("SELECT * FROM users");
+  alert(JSON.stringify(rows, null, 2));
+}}>
+  <Text>Show Users</Text>
+</Pressable>
+
+
         <ThemedText>
           If you already have an account: enter your <ThemedText type="defaultSemiBold">username</ThemedText> and <ThemedText type="defaultSemiBold">password</ThemedText>. 
           If you do not have an account, press{' '}
@@ -57,26 +70,7 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
 
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Pick your sport!</ThemedText>
-        <ThemedText>
-          {`Find your favorite sports and players using the search bar.`}
-        </ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.stepContainer}>
-
-        <ThemedText type="subtitle">Step 3: Place yours bets!</ThemedText>
-
-        <ThemedText>
-          {`When you're feeling confident,`}
-          <ThemedText type="defaultSemiBold"> place your chosen bet </ThemedText>amounts on your favorite players, keep an eye on your{' '}
-          <ThemedText type="defaultSemiBold">bets</ThemedText>, and{' '}
-          <ThemedText type="defaultSemiBold">Good luck!</ThemedText>
-        </ThemedText>
-      </ThemedView>
-
-      <Pressable onPress={() => router.push("/explore")}>
+      <Pressable onPress={() => router.push("/login")}>
         <ThemedView style={styles.button}>
           <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
             Proceed to login
@@ -98,6 +92,8 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerImage: { alignSelf: 'center' },
+
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',

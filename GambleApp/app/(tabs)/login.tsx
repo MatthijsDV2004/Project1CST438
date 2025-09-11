@@ -16,21 +16,17 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
-import {registerUser} from "../../src/auth";
-//Used figma to Create a design for the Sign Up Page
-
+import { verifyLogin } from "../../src/auth";
+//Used figma to Create a design for the Log In Page
 export default function TabTwoScreen() {
-  const db = useSQLiteContext()
+  const db = useSQLiteContext();
+
   const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -41,8 +37,6 @@ export default function TabTwoScreen() {
   {/* this function validates the form data by checking for errors in each field either by incorrect formatting or missing values */}
   const validateForm = () => {
     const next: Record<string, string> = {};
-    if (!formData.firstName.trim()) next.firstName = 'First name is required';
-    if (!formData.lastName.trim()) next.lastName = 'Last name is required';
     const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email) next.email = 'Email is required';
     else if (!emailRx.test(formData.email)) next.email = 'Enter a valid email';
@@ -51,9 +45,6 @@ export default function TabTwoScreen() {
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
       next.password = 'Use upper, lower, and a number';
     }
-    if (!formData.confirmPassword) next.confirmPassword = 'Confirm your password';
-    else if (formData.confirmPassword !== formData.password)
-      next.confirmPassword = 'Passwords do not match';
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -80,28 +71,26 @@ export default function TabTwoScreen() {
   setIsSubmitting(true);
 
   try {
-    const newUser = await registerUser(db, {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-    });
+    const result = await verifyLogin(db, formData.email, formData.password);
 
-    console.log("User inserted with id:", newUser.id);
-    Alert.alert("Success", "Account created successfully!");
-    router.push("/login");
-  } catch (err: any) {
-    if (err.code === "EMAIL_IN_USE") {
-      Alert.alert("Error", "That email is already registered.");
-    } else {
-      console.error("Registration error:", err);
-      Alert.alert("Error", "Registration failed. Please try again.");
+    if (!result.ok) {
+      if (result.reason === "not_found" || result.reason === "bad_credentials") {
+        Alert.alert("Login failed", "Invalid email or password.");
+      }
+      return;
     }
+
+    // At this point, login success 🎉
+    console.log("User logged in with ID:", result.userId);
+    Alert.alert("Welcome back!", "Login successful");
+    router.replace("/"); // Navigate to home
+  } catch (err) {
+    console.error("Login error:", err);
+    Alert.alert("Error", "Could not sign in. Please try again.");
   } finally {
     setIsSubmitting(false);
   }
 };
-
 
   return (
     <ParallaxScrollView
@@ -115,37 +104,12 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Register for BetURLife</ThemedText>
+        <ThemedText type="title">Login to BetURLife</ThemedText>
       </ThemedView>
 
       {/* Card-ish container */}
       <View style={styles.card}>
-        {/* Name row */}
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              placeholder="First name"
-              value={formData.firstName}
-              onChangeText={t => handleInputChange('firstName', t)}
-              autoCapitalize="words"
-              style={[styles.input, errors.firstName && styles.inputError]}
-            />
-            {!!errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
-          </View>
-
-          <View style={styles.field}>
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              placeholder="Last name"
-              value={formData.lastName}
-              onChangeText={t => handleInputChange('lastName', t)}
-              autoCapitalize="words"
-              style={[styles.input, errors.lastName && styles.inputError]}
-            />
-            {!!errors.lastName && <Text style={styles.error}>{errors.lastName}</Text>}
-          </View>
-        </View>
+        
 
         {/* Email */}
         <View style={styles.field}>
@@ -182,57 +146,7 @@ export default function TabTwoScreen() {
             </Pressable>
           </View>
 
-          {!!formData.password && (
-            <View style={styles.strengthRow}>
-              <View style={styles.strengthBg}>
-                <View style={[styles.strengthFill, { width: `${pwStrength.pct}%` }]} />
-              </View>
-              <Text style={styles.strengthLabel}>{pwStrength.label}</Text>
-            </View>
-          )}
           {!!errors.password && <Text style={styles.error}>{errors.password}</Text>}
-        </View>
-
-        {/* Confirm password */}
-        <View style={styles.field}>
-          <Text style={styles.label}>Confirm Password</Text>
-          <View style={styles.inputWithIcon}>
-            <TextInput
-              placeholder="Re-enter password"
-              value={formData.confirmPassword}
-              onChangeText={t => handleInputChange('confirmPassword', t)}
-              secureTextEntry={!showConfirmPassword}
-              autoCapitalize="none"
-              style={[styles.inputFlex, errors.confirmPassword && styles.inputError]}
-            />
-            <Pressable onPress={() => setShowConfirmPassword(p => !p)} hitSlop={10}>
-              <Feather name={showConfirmPassword ? 'eye-off' : 'eye'} size={18} color="#666" />
-            </Pressable>
-          </View>
-
-          {!!formData.confirmPassword && (
-            <View style={styles.matchRow}>
-              {formData.password === formData.confirmPassword ? (
-                <>
-                  <Feather name="check-circle" size={16} color="#16a34a" />
-                  <Text style={styles.matchOk}>Passwords match</Text>
-                </>
-              ) : (
-                <>
-                  <Feather name="x-circle" size={16} color="#dc2626" />
-                  <Text style={styles.matchBad}>Passwords don&apos;t match</Text>
-                </>
-              )}
-            </View>
-          )}
-          {!!errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
-        </View>
-
-        {/* Terms */}
-        <View style={styles.notice}>
-          <Text style={styles.noticeText}>
-            By creating an account, you agree to our Terms of Service and Privacy Policy.
-          </Text>
         </View>
 
         {/* Submit */}
@@ -244,14 +158,14 @@ export default function TabTwoScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Create Account</Text>
+            <Text style={styles.buttonText}>Login</Text>
           )}
         </Pressable>
 
         <Text style={styles.footerText}>
-          Already have an account?{' '}
-          <Text style={styles.link} onPress={() => router.push("/login")}>
-            Sign in
+          Don't have an account?{' '}
+          <Text style={styles.link} onPress={() => router.push("/explore")}>
+            Register here
           </Text>
         </Text>
       </View>
