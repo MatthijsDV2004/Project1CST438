@@ -15,10 +15,12 @@ import { Feather } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-
+import { useSQLiteContext } from "expo-sqlite";
+import {registerUser} from "../../src/auth";
 //Used figma to Create a design for the Sign Up Page
 
 export default function TabTwoScreen() {
+  const db = useSQLiteContext()
   const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -74,18 +76,32 @@ export default function TabTwoScreen() {
 
   {/* this function handles the form submission and communicates with the backend */}
   const handleSubmit = async () => {
-    if (!validateForm()) return;
-    setIsSubmitting(true);
-    try {
-      await new Promise(r => setTimeout(r, 1200)); // simulate API
-      console.log('Registered:', formData);
-      Alert.alert('Success', 'Account created successfully!');
-    } catch (e) {
-      Alert.alert('Error', 'Registration failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+  if (!validateForm()) return;
+  setIsSubmitting(true);
+
+  try {
+    const newUser = await registerUser(db, {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+    });
+
+    console.log("User inserted with id:", newUser.id);
+    Alert.alert("Success", "Account created successfully!");
+    router.push("/login");
+  } catch (err: any) {
+    if (err.code === "EMAIL_IN_USE") {
+      Alert.alert("Error", "That email is already registered.");
+    } else {
+      console.error("Registration error:", err);
+      Alert.alert("Error", "Registration failed. Please try again.");
     }
-  };
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <ParallaxScrollView
