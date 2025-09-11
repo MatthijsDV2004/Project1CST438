@@ -12,16 +12,15 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 async function onInit(db: SQLiteDatabase) {
-  // Create minimal auth schema (id, names, unique email, salted/hash password)
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
+
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       first_name TEXT NOT NULL,
       last_name  TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
-      password_salt TEXT NOT NULL,
       created_at TEXT DEFAULT (datetime('now'))
     );
 
