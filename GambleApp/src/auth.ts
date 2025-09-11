@@ -1,38 +1,77 @@
 import bcrypt from "bcryptjs";
 import type { SQLiteDatabase } from "expo-sqlite";
 import { getOrCreatePepper } from "./secure";
-import { get, run } from "../src/db";
-
+import * as Random from "expo-random";
 const COST = 12;
+
+
+bcrypt.setRandomFallback(len => {
+  // expo-random returns Uint8Array
+  const bytes = Random.getRandomBytes(len);
+  return Array.from(bytes).map(b => b % 256);
+});
+
 function withPepper(password: string, pepper: string) {
   return `${password}:${pepper}`;
 }
-// Creates user. Adds pepper(secret from a key converted to hash), salt(random value), and hash.
-export async function createUser(db: SQLiteDatabase, username: string, password: string) {
+
+export type RegisterInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
+
+// Register new user with bcrypt + pepper
+export async function registerUser(db: SQLiteDatabase, input: RegisterInput) {
+  const email = input.email.trim().toLowerCase();
+
+  // Check for duplicate email
+  const existing = await db.getFirstAsync<{ id: number }>(
+    "SELECT id FROM users WHERE email = ?",
+    [email]
+  );
+  if (existing) {
+    const err: any = new Error("EMAIL_IN_USE");
+    err.code = "EMAIL_IN_USE";
+    throw err;
+  }
+
+  // Generate hash
   const pepper = await getOrCreatePepper();
   const salt = await bcrypt.genSalt(COST);
-  const hash = await bcrypt.hash(withPepper(password, pepper), salt);
+  const hash = await bcrypt.hash(withPepper(input.password, pepper), salt);
 
-  const now = new Date().toISOString();
-  await run(
-    db,
-    `INSERT INTO users (username, password_hash, created_at) VALUES (?, ?, ?)`,
-    username.trim(),
-    hash,
-    now
+  // Insert
+  const res = await db.runAsync(
+    `INSERT INTO users (first_name, last_name, email, password_hash, created_at)
+     VALUES (?, ?, ?, ?, datetime('now'))`,
+    [input.firstName.trim(), input.lastName.trim(), email, hash]
   );
+
+  return { id: Number(res.lastInsertRowId) };
 }
-// Verifies password for login. Converts password into hash + salt/pepper and cross examines in DB.
 
-export async function verifyLogin(db: SQLiteDatabase, username: string, password: string) {
-  const row = await get<{ id: number; password_hash: string }>(
-    db,
-    `SELECT id, password_hash FROM users WHERE username = ?`,
-    username.trim()
+// Verify login
+export async function verifyLogin(
+  db: SQLiteDatabase,
+  email: string,
+  password: string
+) {
+  const row = await db.getFirstAsync<{ id: number; password_hash: string }>(
+    `SELECT id, password_hash FROM users WHERE email = ?`,
+    [email.trim().toLowerCase()]
   );
+
   if (!row) return { ok: false as const, reason: "not_found" };
 
   const pepper = await getOrCreatePepper();
-  const ok = await bcrypt.compare(withPepper(password, pepper), row.password_hash);
-  return ok ? { ok: true as const, userId: row.id } : { ok: false as const, reason: "bad_credentials" };
+  const ok = await bcrypt.compare(
+    withPepper(password, pepper),
+    row.password_hash
+  );
+
+  return ok
+    ? { ok: true as const, userId: row.id }
+    : { ok: false as const, reason: "bad_credentials" };
 }
