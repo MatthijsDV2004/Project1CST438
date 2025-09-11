@@ -17,7 +17,9 @@
   "expo": {
     "doctor": {
       "reactNativeDirectoryCheck": {
-        "exclude": ["react-native-quick-sqlite"],
+        "exclude": [
+          "react-native-quick-sqlite"
+        ],
         "listUnknownPackages": false
       }
     }

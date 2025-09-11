@@ -5,6 +5,7 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import  ClearUsersButton  from '@/components/ClearUsersButton';
 
 import { useEffect } from "react";
 import { useSQLiteContext } from "expo-sqlite";
@@ -49,7 +50,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Login or create your account!</ThemedText>
 
-        
+        <ClearUsersButton></ClearUsersButton>
         {/* This block is testing */}
         <Pressable onPress={async () => {
   const rows = await db.getAllAsync("SELECT * FROM users");

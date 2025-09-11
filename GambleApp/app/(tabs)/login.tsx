@@ -15,10 +15,12 @@ import { Feather } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-
+import { useSQLiteContext } from "expo-sqlite";
+import { verifyLogin } from "../../src/auth";
 //Used figma to Create a design for the Log In Page
-
 export default function TabTwoScreen() {
+  const db = useSQLiteContext();
+
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
@@ -65,18 +67,30 @@ export default function TabTwoScreen() {
 
   {/* this function handles the form submission and communicates with the backend */}
   const handleSubmit = async () => {
-    if (!validateForm()) return;
-    setIsSubmitting(true);
-    try {
-      await new Promise(r => setTimeout(r, 1200)); // simulate API
-      console.log('Registered:', formData);
-      Alert.alert('Success', 'Account created successfully!');
-    } catch (e) {
-      Alert.alert('Error', 'Registration failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+  if (!validateForm()) return;
+  setIsSubmitting(true);
+
+  try {
+    const result = await verifyLogin(db, formData.email, formData.password);
+
+    if (!result.ok) {
+      if (result.reason === "not_found" || result.reason === "bad_credentials") {
+        Alert.alert("Login failed", "Invalid email or password.");
+      }
+      return;
     }
-  };
+
+    // At this point, login success 🎉
+    console.log("User logged in with ID:", result.userId);
+    Alert.alert("Welcome back!", "Login successful");
+    router.replace("/"); // Navigate to home
+  } catch (err) {
+    console.error("Login error:", err);
+    Alert.alert("Error", "Could not sign in. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <ParallaxScrollView
