@@ -1,98 +1,154 @@
-import React, { useEffect,useState, useMemo, use } from 'react';
-import{View,Text, Button, FlatList,ActivityIndicator,StyleSheet,TextInput,TouchableOpacity, Modal, ScrollView} from 'react-native'
-import{fetchMatchOdds,MatchOdds,} from '../../src/api/oddsApi';
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  ActivityIndicator,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from "react-native";
+import { fetchMatchOdds, MatchOdds } from "../../src/api/oddsApi";
 
-
-const SPORTS = ['soccer_epl', 'basketball_nba'];
-const PAGESIZE = 5;
+const SPORTS = ["all", "soccer_epl", "basketball_nba", "americanfootball_nfl"];
+const PAGESIZE = 10;
 
 export default function SportsBetExplorerPage() {
-const [matches, setMatches] = useState<MatchOdds[]>([]);
-const[loading,setLoading]=useState(false);
-const [sportsIndex, setSportsIndex] = useState(0);
-const[startIndex,setStartIndex]=useState(0);
-const [searchTerm,setSearchTerm]=useState('');
-const [selectedMatch,setSelectedMatch]=useState<MatchOdds|null>(null);
-const[showDetails,setShowDetails]=useState(false);
+  const [matches, setMatches] = useState<MatchOdds[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedSport, setSelectedSport] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMatch, setSelectedMatch] = useState<MatchOdds | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
+  // fetch matches based on selected sport
+  const loadMatches = async () => {
+    setLoading(true);
+    try {
+      if (selectedSport === "all") {
+        const allResults = await Promise.all(
+          SPORTS.filter((s) => s !== "all").map((s) => fetchMatchOdds(s))
+        );
+        setMatches(allResults.flat());
+      } else {
+        const sportMatches = await fetchMatchOdds(selectedSport);
+        setMatches(sportMatches.slice(0, PAGESIZE));
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching match odds:",
+        JSON.stringify(error, Object.getOwnPropertyNames(error), 2)
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//start by fetching data from api
-const loadMatches = async ()=>{setLoading(true);
-  try{
-    const allMatches=await fetchMatchOdds(SPORTS[sportsIndex]);
-    const nextMatches=allMatches.slice(startIndex,startIndex+PAGESIZE);
-    setMatches(nextMatches)
-  }
-  catch(error){
-    console.error('Error fetching match odds:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
-  }
-  finally{
-    setLoading(false);
-  }
-};
-useEffect(()=>{
-  loadMatches();
-},[sportsIndex,startIndex]);
+  useEffect(() => {
+    loadMatches();
+  }, [selectedSport]);
 
-//filter matches based on search input
-const filteredMatches=useMemo(()=>{
-  if(!searchTerm) return matches;
-  return matches.filter(
-    (match) =>
-      match.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      match.away_team.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-}, [matches, searchTerm]);
+  // filtering logic
+  const filteredMatches = useMemo(() => {
+    let result = matches;
 
-//this function will handle the division between upcoming and live matches
-const liveMatches = filteredMatches.filter(
-  (match) => {
-    const now = Date.now();
-    return match.commence_time &&
-      new Date(match.commence_time).getTime() <= now;
-  }
-);
-const upcomingMatches = filteredMatches.filter((match) => {
+    if (searchTerm) {
+      result = result.filter(
+        (m) =>
+          m.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          m.away_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          m.sport_title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    return result;
+  }, [matches, searchTerm]);
+
+  // categorize matches
   const now = Date.now();
-  return match.commence_time &&
-    new Date(match.commence_time).getTime() > now;
-});
-console.log('Upcoming Matches:', upcomingMatches);
-console.log('Live Matches:', liveMatches);
-console.log('Filtered Matches:', filteredMatches);
+  const LIVE_MATCH_DURATION_MS = 2 * 60 * 60 * 1000;
 
-console.log('Upcoming Matches:', upcomingMatches);
-console.log('Live Matches:', liveMatches);
-console.log('Filtered Matches:', filteredMatches);
-const handleLoadMore=()=>{
-  setSportsIndex((prevIndex)=>(prevIndex+1)%SPORTS.length);
-  setStartIndex(0);
-};
+  const { liveMatches, upcomingMatches } = useMemo(() => {
+    const live: MatchOdds[] = [];
+    const upcoming: MatchOdds[] = [];
 
-const renderMatchCard=({item}:{item:MatchOdds})=>(
-  <TouchableOpacity style={styles.matchCard} onPress={()=>{
-    setSelectedMatch(item);
-    setShowDetails(true);
-  }}>
-     <Text style={styles.matchTeams}>
+    filteredMatches.forEach((match) => {
+      if (
+        typeof match.commence_time === "string" &&
+        !isNaN(Date.parse(match.commence_time))
+      ) {
+        const matchStart = new Date(match.commence_time).getTime();
+        const matchEnd = matchStart + LIVE_MATCH_DURATION_MS;
+        if (now >= matchStart && now <= matchEnd) {
+          live.push(match);
+        } else if (matchStart > now) {
+          upcoming.push(match);
+        }
+      }
+    });
+    return { liveMatches: live, upcomingMatches: upcoming };
+  }, [filteredMatches]);
+
+  // card renderer
+  const renderMatchCard = ({ item }: { item: MatchOdds }) => (
+    <TouchableOpacity
+      style={styles.matchCard}
+      onPress={() => {
+        setSelectedMatch(item);
+        setIsDetailsOpen(true);
+      }}
+    >
+      <Text style={styles.matchTeams}>
         {item.home_team} vs {item.away_team}
       </Text>
-      <Text style={styles.league}>
-        {SPORTS[sportsIndex].toUpperCase()}
-      </Text>
-  </TouchableOpacity>
-);
-//header 
-return(
-  <View style={styles.container}>
-    <Text style={styles.header}>Sports Bet Explorer</Text>
-    <TextInput
-      style={styles.searchBar}
-      placeholder="Search teams..."
-      value={searchTerm}
-      onChangeText={setSearchTerm}
-    />
-       {loading ? (
+      <Text style={styles.league}>{item.sport_title}</Text>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <Text style={styles.header}>SportsBet Explorer</Text>
+
+      {/* Search */}
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search teams or leagues..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
+
+      {/* Sport Filter */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterRow}
+      >
+        {SPORTS.map((sport) => (
+          <TouchableOpacity
+            key={sport}
+            style={[
+              styles.filterButton,
+              selectedSport === sport && styles.filterButtonActive,
+            ]}
+            onPress={() => setSelectedSport(sport)}
+          >
+            <Text
+              style={[
+                styles.filterText,
+                selectedSport === sport && styles.filterTextActive,
+              ]}
+            >
+              {sport === "all" ? "All Sports" : sport.toUpperCase()}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {loading ? (
         <ActivityIndicator size="large" />
       ) : (
         <ScrollView>
@@ -105,7 +161,7 @@ return(
               <FlatList
                 data={liveMatches}
                 renderItem={renderMatchCard}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, idx) => item.id ?? idx.toString()}
                 scrollEnabled={false}
               />
             </View>
@@ -122,23 +178,20 @@ return(
               <FlatList
                 data={upcomingMatches}
                 renderItem={renderMatchCard}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, idx) => item.id ?? idx.toString()}
                 scrollEnabled={false}
               />
             )}
           </View>
-
-          {/* Load More Button */}
-          <Button title="Switch Sport" onPress={handleLoadMore} />
         </ScrollView>
       )}
 
       {/* Match Details Modal */}
-      <Modal visible={showDetails} animationType="slide">
+      <Modal visible={isDetailsOpen} animationType="slide">
         <View style={styles.modalContainer}>
-          <Button title="Close" onPress={() => setShowDetails(false)} />
+          <Button title="Close" onPress={() => setIsDetailsOpen(false)} />
           {selectedMatch && (
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
               <Text style={styles.modalTitle}>
                 {selectedMatch.home_team} vs {selectedMatch.away_team}
               </Text>
@@ -163,25 +216,40 @@ return(
   );
 }
 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f9f9f9", padding: 16 },
   header: { fontSize: 22, fontWeight: "bold", marginBottom: 12 },
-  searchBar: { 
-    borderWidth: 1, 
-    borderColor: "#ccc", 
-    borderRadius: 8, 
-    padding: 8, 
-    marginBottom: 16 
+  searchBar: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 12,
   },
-  section: { marginBottom: 20 },
+  filterRow: { flexDirection: "row", marginBottom: 2 }, // reduced marginBottom
+ filterButton: {
+  paddingTop: 4,        // smaller top padding
+  paddingBottom: 4,     // smaller bottom padding
+  paddingHorizontal: 10, // keep horizontal spacing nice
+  borderRadius: 12,     // slightly smaller rounded corners
+  borderWidth: 1,
+  borderColor: '#ccc',
+  marginRight: 6,       // a bit less spacing between buttons
+},
+  filterButtonActive: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  filterText: { color: "#333" },
+  filterTextActive: { color: "#fff" },
+  section: { marginBottom: 20},
   sectionTitle: { fontSize: 18, fontWeight: "600", marginBottom: 8 },
-  matchCard: { 
-    padding: 12, 
-    backgroundColor: "#fff", 
-    marginBottom: 8, 
-    borderRadius: 8, 
-    elevation: 1 
+  matchCard: {
+    padding: 12,
+    backgroundColor: "#fff",
+    marginBottom: 5,
+    borderRadius: 5,
+    elevation: 1,
   },
   matchTeams: { fontSize: 16, fontWeight: "bold" },
   league: { fontSize: 14, color: "#666" },
