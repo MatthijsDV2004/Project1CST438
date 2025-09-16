@@ -21,14 +21,27 @@ async function onInit(db: SQLiteDatabase) {
       last_name  TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
+      security_question TEXT NOT NULL,
       created_at TEXT DEFAULT (datetime('now'))
     );
-
     CREATE TABLE IF NOT EXISTS user_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      key TEXT NOT NULL,
-      value TEXT,
+      currency INTEGER NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS betts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      sport TEXT NOT NULL,
+      team1 TEXT NOT NULL,
+      team2 TEXT NOT NULL,
+      bett_amount INTEGER NOT NULL,
+      is_current_bett BOOLEAN NOT NULL,
+      moneyline INTEGER,
+      time DATETIME NOT NULL,
+
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
   `);
