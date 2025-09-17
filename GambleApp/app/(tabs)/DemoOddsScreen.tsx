@@ -11,6 +11,7 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
+import { useRouter, Link } from 'expo-router';
 import { fetchMatchOdds, MatchOdds } from "../../src/api/oddsApi";
 import{ Ionicons } from '@expo/vector-icons';
 
@@ -18,6 +19,7 @@ const SPORTS = ["all", "soccer_epl", "basketball_nba", "americanfootball_nfl"];
 const PAGESIZE = 10;
 
 export default function SportsBetExplorerPage() {
+  const router = useRouter();
   const [matches, setMatches] = useState<MatchOdds[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedSport, setSelectedSport] = useState("all");
@@ -166,7 +168,7 @@ async function loadWallet() {
       <View style={styles.container}>
         {/* Header */}
         <Text style={styles.header}>SportsBet Explorer
-          <TouchableOpacity onPress={() => alert("Profile Pressed")}>
+          <TouchableOpacity onPress={() => router.push("/Profile")}>
             <Ionicons style={styles.icon} name="person" size={20} color="black" />
           </TouchableOpacity>
         </Text>
