@@ -1,4 +1,4 @@
-### BetFoundry 
+### BetURLife 
 #### a Gambling Predictions App
 Gamble away all your money and win big!
 
