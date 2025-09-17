@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
@@ -16,8 +14,8 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
-import { verifyLogin } from "../../src/auth";
-//Used figma to Create a design for the Log In Page
+
+
 export default function TabTwoScreen() {
   const db = useSQLiteContext();
 
@@ -26,78 +24,13 @@ export default function TabTwoScreen() {
     email: '',
     password: '',
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
-  };
-  {/* this function validates the form data by checking for errors in each field either by incorrect formatting or missing values */}
-  const validateForm = () => {
-    const next: Record<string, string> = {};
-    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) next.email = 'Email is required';
-    else if (!emailRx.test(formData.email)) next.email = 'Enter a valid email';
-    if (!formData.password) next.password = 'Password is required';
-    else if (formData.password.length < 8) next.password = 'At least 8 characters';
-    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      next.password = 'Use upper, lower, and a number';
-    }
-
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  {/* this function calculates the strength of the password based on various criteria */}
-  const getPasswordStrength = (password: string) => {
-    if (!password) return { pct: 0, label: '' };
-    let s = 0;
-    if (password.length >= 8) s++;
-    if (/[a-z]/.test(password)) s++;
-    if (/[A-Z]/.test(password)) s++;
-    if (/\d/.test(password)) s++;
-    if (/[^a-zA-Z0-9]/.test(password)) s++;
-    const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-    return { pct: (s / 5) * 100, label: labels[s - 1] || '' };
-  };
-  const pwStrength = getPasswordStrength(formData.password);
-
-
-  {/* this function handles the form submission and communicates with the backend */}
-  const handleSubmit = async () => {
-  if (!validateForm()) return;
-  setIsSubmitting(true);
-
-  try {
-    const result = await verifyLogin(db, formData.email, formData.password);
-
-    if (!result.ok) {
-      if (result.reason === "not_found" || result.reason === "bad_credentials") {
-        Alert.alert("Login failed", "Invalid email or password.");
-      }
-      return;
-    }
-
-    // At this point, login success 🎉
-    console.log("User logged in with ID:", result.userId);
-    Alert.alert("Welcome back!", "Login successful");
-    router.replace("/"); // Navigate to home
-  } catch (err) {
-    console.error("Login error:", err);
-    Alert.alert("Error", "Could not sign in. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#f0f0f0', dark: '#303030' }}
       headerImage={
         <Image
-          source={require('../../assets/images/stadium.webp')}
+          source={require('../../assets/images/cash.jpg')}
           style={[styles.headerImage, { width: 500, height: 300 }]}
           contentFit="cover"
         />
@@ -109,42 +42,20 @@ export default function TabTwoScreen() {
 
       {/* Card-ish container */}
       <View style={styles.card}>
-        
-
-        {/* Email display */}
+        {/* Currency display */}
         <View style={styles.field}>
-          <Text style={styles.label}>Email: </Text>
-         
-          {!!errors.email && <Text style={styles.error}>{errors.email}</Text>}
+          <Text style={styles.label}>Currency: </Text>         
         </View>
-
-        {/* Password display */}
-        <View style={styles.field}>
-          <Text style={styles.label}>Password: </Text>
-
-          {!!errors.password && <Text style={styles.error}>{errors.password}</Text>}
-        </View>
-
-        {/* Submit */}
-        <Pressable
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-          style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Login</Text>
-          )}
-        </Pressable>
-
-        <Text style={styles.footerText}>
-          Don't have an account?{' '}
-          <Text style={styles.link} onPress={() => router.push("/explore")}>
-            Register here
-          </Text>
-        </Text>
       </View>
+
+      <Pressable onPress={() => router.push("/settings")}>
+        <ThemedView style={styles.button}>
+          <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
+            Settings
+          </ThemedText>
+        </ThemedView>
+    </Pressable>
+
     </ParallaxScrollView>
   );
 }

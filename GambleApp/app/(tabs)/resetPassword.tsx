@@ -16,18 +16,17 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
-import {registerUser} from "../../src/auth";
+import {resetPassword} from "../../src/auth";
 //Used figma to Create a design for the Sign Up Page
 
 export default function TabTwoScreen() {
   const db = useSQLiteContext()
   const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    securityQuestion:'',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -75,11 +74,10 @@ export default function TabTwoScreen() {
   setIsSubmitting(true);
 
   try {
-    const newUser = await registerUser(db, {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+    const newUser = await resetPassword(db, {
       email: formData.email,
       password: formData.password,
+      securityQuestion: formData.securityQuestion,
     });
 
     console.log("User inserted with id:", newUser.id);
@@ -198,20 +196,18 @@ export default function TabTwoScreen() {
         </View>
 
         {/* Security Question */}
-            <View style={styles.field}>
+        <View style={styles.field}>
             <Text style={styles.label}>Security Question</Text>
             <Text>What is your favorite animal?</Text>
             <TextInput
                 placeholder="Ex: Golden Retriever"
-                value={formData.email}
-                onChangeText={t => handleInputChange('email', t)}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-                style={[styles.input, errors.email && styles.inputError]}
-            />
-            {!!errors.email && <Text style={styles.error}>{errors.email}</Text>}
+                value={formData.securityQuestion}
+                onChangeText={t => handleInputChange('securityQuestion', t)}
+                keyboardType="default"
+                autoCapitalize="words"
+                textContentType="none"
+                style={[styles.input, errors.securityQuestion && styles.inputError]}
+                />
         </View>
 
         {/* Submit */}

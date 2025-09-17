@@ -28,6 +28,7 @@ export default function TabTwoScreen() {
     email: '',
     password: '',
     confirmPassword: '',
+    securityQuestion:''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -85,6 +86,7 @@ export default function TabTwoScreen() {
       lastName: formData.lastName,
       email: formData.email,
       password: formData.password,
+      securityQuestion: formData.securityQuestion,
     });
 
     console.log("User inserted with id:", newUser.id);
@@ -226,6 +228,21 @@ export default function TabTwoScreen() {
             </View>
           )}
           {!!errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
+        </View>
+
+        {/* Security Question */}
+        <View style={styles.field}>
+            <Text style={styles.label}>Security Question</Text>
+            <Text>What is your favorite animal?</Text>
+            <TextInput
+                placeholder="Ex: Golden Retriever"
+                value={formData.securityQuestion}
+                onChangeText={t => handleInputChange('securityQuestion', t)}
+                keyboardType="default"
+                autoCapitalize="words"
+                textContentType="none"
+                style={[styles.input, errors.securityQuestion && styles.inputError]}
+                />
         </View>
 
         {/* Terms */}
