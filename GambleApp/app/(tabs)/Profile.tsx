@@ -56,6 +56,14 @@ export default function TabTwoScreen() {
         </ThemedView>
     </Pressable>
 
+    <Pressable onPress={() => router.push("/DemoOddsScreen")}>
+        <ThemedView style={styles.button}>
+          <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
+            Back
+          </ThemedText>
+        </ThemedView>
+    </Pressable>
+
     </ParallaxScrollView>
   );
 }
