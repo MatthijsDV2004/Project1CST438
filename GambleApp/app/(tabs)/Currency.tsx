@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from "react-native";
 
 export default function PurchaseScreen() {
   const [totalCredits, setTotalCredits] = useState<number>(0);
@@ -26,7 +26,8 @@ export default function PurchaseScreen() {
       </Text>
 
       <Text style={styles.title}>Buy Credits</Text>
-
+      
+  <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.grid}>
         {options.map((opt, idx) => {
           const isSelected = idx === lastSelected;
@@ -44,6 +45,7 @@ export default function PurchaseScreen() {
           );
         })}
       </View>
+      </ScrollView>
     </View>
   );
 }
@@ -110,5 +112,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#7c3aed",
+  },
+  scrollContainer: {
+    paddingBottom: 100,
   },
 });
