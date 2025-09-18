@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useRouter, Link } from 'expo-router';
+
+const router = useRouter();
 
 export default function PurchaseScreen() {
   const [totalCredits, setTotalCredits] = useState<number>(0);
   const [lastSelected, setLastSelected] = useState<number | null>(null);
-
+  const navigation = useNavigation();
+  
   const options = [ //will update later with more acurate resemblance for curency values
     { price: 4.99, credits: 500, img: require("../../assets/images/vbuck1.png") },
     { price: 9.99, credits: 1200, img: require("../../assets/images/vbuck1.png") },
@@ -21,13 +26,26 @@ export default function PurchaseScreen() {
   return (
     //total credits indicator shown on the top right
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.paymentButton}
+        onPress={() => navigation.navigate("addPayment" as never)}
+      >
+        <Text style={styles.paymentButtonText}>Add Payment Method</Text>
+      </TouchableOpacity>
+      <Pressable
+      style={styles.button}
+      onPress={() => router.push("/profile")}
+    >
+      <Text style={styles.buttonText}>Back</Text>
+    </Pressable>
       <Text style={styles.creditsIndicator}>
         {totalCredits.toLocaleString()} Credits
       </Text>
 
       <Text style={styles.title}>Buy Credits</Text>
       
-  <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView>
+
       <View style={styles.grid}>
         {options.map((opt, idx) => {
           const isSelected = idx === lastSelected;
@@ -50,6 +68,7 @@ export default function PurchaseScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -57,13 +76,25 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
+   paymentButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  paymentButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
   creditsIndicator: {
     position: "absolute",
     top: 40,
     right: 20,
     fontSize: 18,
     fontWeight: "bold",
-    color: "#7c3aed", // purple
+    color: "#7c3aed",
   },
   title: {
     fontSize: 24,
@@ -74,8 +105,21 @@ const styles = StyleSheet.create({
   },
   grid: {
     width: "100%",
-    alignItems: "center",
-  },
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 16,
+    marginBottom: 20,
+    },
+    button: {
+      marginTop: 14,
+      backgroundColor: '#4f46e5',
+      borderRadius: 10,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    buttonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  
   card: {
     width: "80%",
     backgroundColor: "white",
@@ -112,8 +156,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#7c3aed",
-  },
-  scrollContainer: {
-    paddingBottom: 100,
   },
 });

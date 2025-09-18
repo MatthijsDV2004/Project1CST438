@@ -1,71 +1,49 @@
-// app/_layout.tsx
-import React from 'react';
-import { Platform } from 'react-native';
-import { Tabs } from 'expo-router';
+import 'react-native-get-random-values';
+import { registerRootComponent } from 'expo';
+import { Slot, useRouter, useSegments } from 'expo-router';
+import React, { useEffect } from 'react';
+import { SessionProvider, useSession } from '../lib/sessionContext';
+import { ActivityIndicator, View } from 'react-native';
+import { SQLiteProvider } from "expo-sqlite";
+import { initDb } from "../lib/db";
 
-import { SQLiteProvider, type SQLiteDatabase } from 'expo-sqlite';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+function AuthGate({ children }: React.PropsWithChildren) {
+  const { isAuthenticated, loading } = useSession();
+  const segments = useSegments();
+  const router = useRouter();
 
-async function onInit(db: SQLiteDatabase) {
-  await db.execAsync(`
-    PRAGMA journal_mode = WAL;
+  useEffect(() => {
+    if (loading) return;
+    const inAuthGroup = (segments[0] as string) === '(auth)';
 
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      first_name TEXT NOT NULL,
-      last_name  TEXT NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
-      created_at TEXT DEFAULT (datetime('now'))
+    if (!isAuthenticated && !inAuthGroup) {
+      router.replace('../(auth)/sign-in');
+    } else if (isAuthenticated && inAuthGroup) {
+      router.replace('../(tabs)');
+    }
+  }, [loading, isAuthenticated, segments]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </View>
     );
+  }
 
-    CREATE TABLE IF NOT EXISTS user_data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      key TEXT NOT NULL,
-      value TEXT,
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-  `);
+  return <>{children}</>;
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <SQLiteProvider databaseName="app.db" onInit={onInit}>
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-          headerShown: false,
-          tabBarButton: HapticTab,
-          tabBarBackground: TabBarBackground,
-          tabBarStyle: Platform.select({
-            ios: { position: 'absolute' },
-            default: {},
-          }),
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: 'Explore',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-          }}
-        />
-      </Tabs>
+    <SQLiteProvider databaseName="app.db" onInit={initDb}>
+      <SessionProvider>
+      <AuthGate>
+        <Slot />
+      </AuthGate>
+    </SessionProvider>
     </SQLiteProvider>
+    
   );
 }

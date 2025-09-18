@@ -52,6 +52,7 @@ const apiKey = process.env.EXPO_PUBLIC_API_KEY
           regions: "us",
           markets: "h2h",
           oddsFormat: "decimal",
+          bookmakers: "draftkings,fanDuel",
         },
       }
     );

@@ -16,18 +16,17 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
-import {registerUser} from "../../src/auth";
+import {resetPassword} from "../../src/auth";
 //Used figma to Create a design for the Sign Up Page
 
 export default function TabTwoScreen() {
   const db = useSQLiteContext()
   const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    securityQuestion:'',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -41,11 +40,6 @@ export default function TabTwoScreen() {
   {/* this function validates the form data by checking for errors in each field either by incorrect formatting or missing values */}
   const validateForm = () => {
     const next: Record<string, string> = {};
-    if (!formData.firstName.trim()) next.firstName = 'First name is required';
-    if (!formData.lastName.trim()) next.lastName = 'Last name is required';
-    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) next.email = 'Email is required';
-    else if (!emailRx.test(formData.email)) next.email = 'Enter a valid email';
     if (!formData.password) next.password = 'Password is required';
     else if (formData.password.length < 8) next.password = 'At least 8 characters';
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
@@ -80,16 +74,15 @@ export default function TabTwoScreen() {
   setIsSubmitting(true);
 
   try {
-    const newUser = await registerUser(db, {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+    const newUser = await resetPassword(db, {
       email: formData.email,
       password: formData.password,
+      securityQuestion: formData.securityQuestion,
     });
 
     console.log("User inserted with id:", newUser.id);
     Alert.alert("Success", "Account created successfully!");
-    router.push("/login");
+    router.push("/sign-in");
   } catch (err: any) {
     if (err.code === "EMAIL_IN_USE") {
       Alert.alert("Error", "That email is already registered.");
@@ -108,44 +101,18 @@ export default function TabTwoScreen() {
       headerBackgroundColor={{ light: '#f0f0f0', dark: '#303030' }}
       headerImage={
         <Image
-          source={require('../../assets/images/stadium.webp')}
+          source={require('../../assets/images/settings.webp')}
           style={[styles.headerImage, { width: 500, height: 300 }]}
           contentFit="cover"
         />
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Register for BetURLife</ThemedText>
+        <ThemedText type="title">Reset your password</ThemedText>
       </ThemedView>
 
       {/* Card-ish container */}
       <View style={styles.card}>
-        {/* Name row */}
-        <View style={styles.row}>
-          <View style={styles.field}>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              placeholder="First name"
-              value={formData.firstName}
-              onChangeText={t => handleInputChange('firstName', t)}
-              autoCapitalize="words"
-              style={[styles.input, errors.firstName && styles.inputError]}
-            />
-            {!!errors.firstName && <Text style={styles.error}>{errors.firstName}</Text>}
-          </View>
-
-          <View style={styles.field}>
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              placeholder="Last name"
-              value={formData.lastName}
-              onChangeText={t => handleInputChange('lastName', t)}
-              autoCapitalize="words"
-              style={[styles.input, errors.lastName && styles.inputError]}
-            />
-            {!!errors.lastName && <Text style={styles.error}>{errors.lastName}</Text>}
-          </View>
-        </View>
 
         {/* Email */}
         <View style={styles.field}>
@@ -165,10 +132,10 @@ export default function TabTwoScreen() {
 
         {/* Password */}
         <View style={styles.field}>
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.label}>New Password</Text>
           <View style={styles.inputWithIcon}>
             <TextInput
-              placeholder="Enter password"
+              placeholder="Enter new password"
               value={formData.password}
               onChangeText={t => handleInputChange('password', t)}
               secureTextEntry={!showPassword}
@@ -195,10 +162,10 @@ export default function TabTwoScreen() {
 
         {/* Confirm password */}
         <View style={styles.field}>
-          <Text style={styles.label}>Confirm Password</Text>
+          <Text style={styles.label}>Confirm New Password</Text>
           <View style={styles.inputWithIcon}>
             <TextInput
-              placeholder="Re-enter password"
+              placeholder="Re-enter new password"
               value={formData.confirmPassword}
               onChangeText={t => handleInputChange('confirmPassword', t)}
               secureTextEntry={!showConfirmPassword}
@@ -228,11 +195,19 @@ export default function TabTwoScreen() {
           {!!errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
         </View>
 
-        {/* Terms */}
-        <View style={styles.notice}>
-          <Text style={styles.noticeText}>
-            By creating an account, you agree to our Terms of Service and Privacy Policy.
-          </Text>
+        {/* Security Question */}
+        <View style={styles.field}>
+            <Text style={styles.label}>Security Question</Text>
+            <Text>What is your favorite animal?</Text>
+            <TextInput
+                placeholder="Ex: Golden Retriever"
+                value={formData.securityQuestion}
+                onChangeText={t => handleInputChange('securityQuestion', t)}
+                keyboardType="default"
+                autoCapitalize="words"
+                textContentType="none"
+                style={[styles.input, errors.securityQuestion && styles.inputError]}
+                />
         </View>
 
         {/* Submit */}
@@ -244,14 +219,13 @@ export default function TabTwoScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Create Account</Text>
+            <Text style={styles.buttonText}>Reset Password</Text>
           )}
         </Pressable>
 
         <Text style={styles.footerText}>
-          Already have an account?{' '}
-          <Text style={styles.link} onPress={() => router.push("/login")}>
-            Sign in
+          <Text style={styles.link} onPress={() => router.push("/settings")}>
+            Back To Settings
           </Text>
         </Text>
       </View>
