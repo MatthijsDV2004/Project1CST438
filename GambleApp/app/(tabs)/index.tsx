@@ -120,7 +120,7 @@ const [confirmData, setConfirmData] = useState<{ team: string; price: number } |
 const handleConfirmBet = () => {
   let amount: number | null = null;
   if (confirmData) {
-    // TODO: replace with  real bet logic
+    // TODO: replace with real bet logic
     amount = Number(stake);
     if (!amount || isNaN(amount) || amount <= 0) {
       alert("Please enter a valid stake amount.");
