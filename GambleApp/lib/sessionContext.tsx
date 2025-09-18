@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import { initDb, User } from './db';
+import { User } from './db';
 import { useSQLiteContext } from 'expo-sqlite';
 
 import { restoreSession, createSession as doCreateSession, logout as sessionLogout } from './session';

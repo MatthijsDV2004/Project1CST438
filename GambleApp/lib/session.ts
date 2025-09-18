@@ -46,8 +46,10 @@ export async function restoreSession(db: SQLiteDatabase): Promise<{ user: User |
 export async function logout(db: SQLiteDatabase) {
   
   const token = await SecureStore.getItemAsync(SECURE_TOKEN_KEY);
+  console.log("Logging out, found token:", token);
   if (token) {
     await db.runAsync("DELETE FROM sessions WHERE token = ?", [token]);
+    console.log("Deleted session from DB");
     await SecureStore.deleteItemAsync(SECURE_TOKEN_KEY);
   }
 }

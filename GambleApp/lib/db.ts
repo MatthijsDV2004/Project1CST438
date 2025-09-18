@@ -7,6 +7,7 @@ export type User = {
   email: string;
   password_hash: string;
   security_question: string;
+  currency: number;
   created_at: string;
 };
 
@@ -42,6 +43,7 @@ export async function initDb(db: SQLite.SQLiteDatabase) {
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
       security_question TEXT NOT NULL,
+      currency INTEGER DEFAULT 500,
       created_at TEXT DEFAULT (datetime('now'))
     );
 

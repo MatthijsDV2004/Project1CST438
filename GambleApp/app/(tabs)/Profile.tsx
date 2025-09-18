@@ -39,14 +39,14 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Logged in as: {user?.first_name} {user?.last_name}</ThemedText>
+        <ThemedText type="title">Logged in as: {user?.first_name} {user?.last_name}  </ThemedText>
       </ThemedView>
 
       {/* Card-ish container */}
       <View style={styles.card}>
         {/* Currency display */}
         <View style={styles.field}>
-          <Text style={styles.label}>Currency: </Text>         
+          <Text style={styles.label}>Currency: {user?.currency} Credits</Text>         
         </View>
         <Pressable
       style={styles.button}
