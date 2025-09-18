@@ -47,7 +47,7 @@ export async function logout() {
   const db = await getDB();
   const token = await SecureStore.getItemAsync(SECURE_TOKEN_KEY);
   if (token) {
-    await db.runAsync('DELETE FROM sessions WHERE token = ?', [token]);
+    await db.runAsync("DELETE FROM sessions WHERE token = ?", [token]);
     await SecureStore.deleteItemAsync(SECURE_TOKEN_KEY);
   }
 }

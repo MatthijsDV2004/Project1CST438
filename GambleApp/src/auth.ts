@@ -33,7 +33,7 @@ export type PasswordReset = {
 export async function registerUser(db: SQLiteDatabase, input: RegisterInput) {
   const email = input.email.trim().toLowerCase();
 
-  // Check for duplicate email
+  // Check for duplicate
   const existing = await db.getFirstAsync<{ id: number }>(
     "SELECT id FROM users WHERE email = ?",
     [email]
@@ -44,16 +44,22 @@ export async function registerUser(db: SQLiteDatabase, input: RegisterInput) {
     throw err;
   }
 
-  // Generate hash
+  // Hash with bcrypt + pepper
   const pepper = await getOrCreatePepper();
   const salt = await bcrypt.genSalt(COST);
   const hash = await bcrypt.hash(withPepper(input.password, pepper), salt);
 
-  // Insert
+  // Insert (now includes security_question!)
   const res = await db.runAsync(
-    `INSERT INTO users (first_name, last_name, email, password_hash, created_at)
-     VALUES (?, ?, ?, ?, datetime('now'))`,
-    [input.firstName.trim(), input.lastName.trim(), email, hash]
+    `INSERT INTO users (first_name, last_name, email, password_hash, security_question, created_at)
+     VALUES (?, ?, ?, ?, ?, datetime('now'))`,
+    [
+      input.firstName.trim(),
+      input.lastName.trim(),
+      email,
+      hash,
+      input.securityQuestion.trim(),
+    ]
   );
 
   return { id: Number(res.lastInsertRowId) };

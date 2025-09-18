@@ -82,7 +82,7 @@ export default function TabTwoScreen() {
 
     console.log("User inserted with id:", newUser.id);
     Alert.alert("Success", "Account created successfully!");
-    router.push("/login");
+    router.push("/sign-in");
   } catch (err: any) {
     if (err.code === "EMAIL_IN_USE") {
       Alert.alert("Error", "That email is already registered.");
@@ -224,13 +224,13 @@ export default function TabTwoScreen() {
         </Pressable>
 
         <Text style={styles.footerText}>
-          <Text style={styles.link} onPress={() => router.push("/login")}>
+          <Text style={styles.link} onPress={() => router.push("/sign-in")}>
             Back To Login
           </Text>
         </Text>
         <Text style={styles.footerText}>
             Don't have an account?{' '}
-          <Text style={styles.link} onPress={() => router.push("/explore")}>
+          <Text style={styles.link} onPress={() => router.push("/register")}>
             Register Here           
           </Text>
         </Text>
@@ -317,5 +317,5 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
 
   footerText: { textAlign: 'center', color: '#6b7280', marginTop: 12 },
-  link: { color: '#4f46e5', fontWeight: '600' },
+  link: { color: '#4f46e5', fontWeight: '600' }
 });

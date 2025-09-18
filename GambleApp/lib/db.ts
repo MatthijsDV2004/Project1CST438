@@ -1,24 +1,13 @@
-// app/_layout.tsx
-import React from 'react';
-import { Platform } from 'react-native';
-import { Tabs } from 'expo-router';
-
-import { SQLiteProvider, type SQLiteDatabase } from 'expo-sqlite';
-import * as SQLite from 'expo-sqlite';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import * as SQLite from "expo-sqlite";
 
 export type User = {
   id: number;
   first_name: string;
   last_name: string;
+  email: string;
   password_hash: string;
-  salt: string;
-  created_at: number;
+  security_question: string;
+  created_at: string;
 };
 
 export type Session = {
@@ -29,16 +18,20 @@ export type Session = {
   expires_at: number;
 };
 
+// If you want manual DB access outside <SQLiteProvider>
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 export function getDB() {
-  if (!dbPromise) dbPromise = SQLite.openDatabaseAsync('app.db');
+  if (!dbPromise) {
+    dbPromise = SQLite.openDatabaseAsync("app.db");
+  }
   return dbPromise!;
 }
 
-export async function initDb() {
-const db = await getDB();
+// Correct initDb for SQLiteProvider
+export async function initDb(db: SQLite.SQLiteDatabase) {
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
+    PRAGMA foreign_keys = ON;
 
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +42,7 @@ const db = await getDB();
       security_question TEXT NOT NULL,
       created_at TEXT DEFAULT (datetime('now'))
     );
+
     CREATE TABLE IF NOT EXISTS user_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
@@ -66,9 +60,9 @@ const db = await getDB();
       is_current_bett BOOLEAN NOT NULL,
       moneyline INTEGER,
       time DATETIME NOT NULL,
-
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
+
     CREATE TABLE IF NOT EXISTS sessions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
@@ -77,11 +71,8 @@ const db = await getDB();
       expires_at INTEGER NOT NULL,
       FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     );
+
     CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
     CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
   `);
 }
-
-
-
-

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -26,6 +26,18 @@ export default function TabTwoScreen() {
 const { setAuthenticatedUser } = useSession();
 
 const db = useSQLiteContext();
+useEffect(() => {
+  (async () => {
+    try {
+      const v = await db.getFirstAsync<{ v: string }>(
+        "select sqlite_version() as v"
+      );
+      console.log("SQLite version:", v?.v);
+    } catch (e) {
+      console.error("DB still failing:", e);
+    }
+  })();
+}, [db]);
 
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -55,15 +67,7 @@ const db = useSQLiteContext();
     setErrors(next);
     return Object.keys(next).length === 0;
   };
-  const handleShowUsers = async () => {
-    try {
-      const rows = await db.getAllAsync("SELECT id, email FROM users");
-      Alert.alert("Users", JSON.stringify(rows, null, 2));
-    } catch (e) {
-      console.error("Error fetching users:", e);
-      Alert.alert("Error", "Could not load users");
-    }
-  };
+  
 
   {/* this function calculates the strength of the password based on various criteria */}
   const getPasswordStrength = (password: string) => {
@@ -99,7 +103,7 @@ const db = useSQLiteContext();
       console.log("User logged in with ID:", result.userId);
   
       await setAuthenticatedUser(result.userId);
-      router.replace("/");
+      router.replace("../(tabs)/index");
     } catch (err) {
       console.error("Login error:", err);
       Alert.alert("Error", "Could not sign in. Please try again.");
@@ -120,7 +124,6 @@ const db = useSQLiteContext();
       }
     >
       <ThemedView style={styles.titleContainer}>
-      <Button title="Show Users" onPress={handleShowUsers} />;
         <ThemedText type="title">Login to BetURLife</ThemedText>
       </ThemedView>
 

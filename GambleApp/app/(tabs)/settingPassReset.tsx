@@ -82,7 +82,7 @@ export default function TabTwoScreen() {
 
     console.log("User inserted with id:", newUser.id);
     Alert.alert("Success", "Account created successfully!");
-    router.push("/login");
+    router.push("/sign-in");
   } catch (err: any) {
     if (err.code === "EMAIL_IN_USE") {
       Alert.alert("Error", "That email is already registered.");

@@ -63,7 +63,7 @@ export default function TabTwoScreen() {
         </Text>
     </View>
 
-    <Pressable onPress={() => router.push("/Profile")}>
+    <Pressable onPress={() => router.push("/profile")}>
         <ThemedView style={styles.button}>
           <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
             Back to Profile

@@ -18,7 +18,6 @@ export const SessionProvider: React.FC<React.PropsWithChildren> = ({ children })
 
   useEffect(() => {
     (async () => {
-      await initDb();
       const { user } = await restoreSession();
       setUser(user);
       setLoading(false);
@@ -27,20 +26,29 @@ export const SessionProvider: React.FC<React.PropsWithChildren> = ({ children })
 
   const setAuthenticatedUser = async (userId: number) => {
     await doCreateSession(userId);
+    try {
     const { user } = await restoreSession();
     setUser(user);
-  };
+    } catch (e) {
+      console.error("restoreSession failed:", e);
+    } finally {
+      setLoading(false);
+  }
+};
 
   const logout = async () => {
-    await sessionLogout();   // clear SQLite + SecureStore
-    setUser(null);           // reset React state
+    await sessionLogout();  // clear db + SecureStore
+    setUser(null);          // reset state so isAuthenticated = false
   };
 
   const value = useMemo(() => ({
     user, loading, setAuthenticatedUser, logout, isAuthenticated: !!user
   }), [user, loading]);
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ user, loading, setAuthenticatedUser, logout, isAuthenticated: !!user }}>
+      {children}
+    </Ctx.Provider>);
 };
 
 export function useSession() {
