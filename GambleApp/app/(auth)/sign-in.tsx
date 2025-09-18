@@ -26,6 +26,7 @@ export default function TabTwoScreen() {
 const { setAuthenticatedUser } = useSession();
 
 const db = useSQLiteContext();
+console.log(db.execAsync(`select * from users`));
 useEffect(() => {
   (async () => {
     try {
