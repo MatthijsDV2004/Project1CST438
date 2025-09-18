@@ -6,6 +6,8 @@ import {
   Text,
   View,
 } from 'react-native';
+import { Button } from 'react-native';
+import { useSession } from '../../lib/sessionContext';
 import { useRouter, Link } from 'expo-router';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
@@ -17,6 +19,7 @@ import { useSQLiteContext } from "expo-sqlite";
 
 
 export default function TabTwoScreen() {
+  const { logout, user } = useSession();
   const db = useSQLiteContext();
 
   const router = useRouter();
@@ -44,7 +47,7 @@ export default function TabTwoScreen() {
     <View style={styles.card}>
         {/* name display */}
         <View style={styles.field}>
-        <Text style={styles.label}>Name: </Text>         
+        <Button title="Log out" onPress={logout} />       
         </View>
 
         {/* email display */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Alert,
+  Button,
   ActivityIndicator,
   Pressable,
   StyleSheet,
@@ -17,9 +18,14 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
 import { verifyLogin } from "../../src/auth";
+import { useSession } from "../../lib/sessionContext";
+import { getDB } from "../../lib/db";
+
 //Used figma to Create a design for the Log In Page
 export default function TabTwoScreen() {
-  const db = useSQLiteContext();
+const { setAuthenticatedUser } = useSession();
+
+const db = useSQLiteContext();
 
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -49,6 +55,15 @@ export default function TabTwoScreen() {
     setErrors(next);
     return Object.keys(next).length === 0;
   };
+  const handleShowUsers = async () => {
+    try {
+      const rows = await db.getAllAsync("SELECT id, email FROM users");
+      Alert.alert("Users", JSON.stringify(rows, null, 2));
+    } catch (e) {
+      console.error("Error fetching users:", e);
+      Alert.alert("Error", "Could not load users");
+    }
+  };
 
   {/* this function calculates the strength of the password based on various criteria */}
   const getPasswordStrength = (password: string) => {
@@ -67,30 +82,31 @@ export default function TabTwoScreen() {
 
   {/* this function handles the form submission and communicates with the backend */}
   const handleSubmit = async () => {
-  if (!validateForm()) return;
-  setIsSubmitting(true);
-
-  try {
-    const result = await verifyLogin(db, formData.email, formData.password);
-
-    if (!result.ok) {
-      if (result.reason === "not_found" || result.reason === "bad_credentials") {
-        Alert.alert("Login failed", "Invalid email or password.");
+    
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+  
+    try {
+      const result = await verifyLogin(db, formData.email, formData.password);
+  
+      if (!result.ok) {
+        if (result.reason === "not_found" || result.reason === "bad_credentials") {
+          Alert.alert("Login failed", "Invalid email or password.");
+        }
+        return;
       }
-      return;
+  
+      console.log("User logged in with ID:", result.userId);
+  
+      await setAuthenticatedUser(result.userId);
+      router.replace("/");
+    } catch (err) {
+      console.error("Login error:", err);
+      Alert.alert("Error", "Could not sign in. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // At this point, login success 🎉
-    console.log("User logged in with ID:", result.userId);
-    Alert.alert("Welcome back!", "Login successful");
-    router.replace("/"); // Navigate to home
-  } catch (err) {
-    console.error("Login error:", err);
-    Alert.alert("Error", "Could not sign in. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   return (
     <ParallaxScrollView
@@ -104,6 +120,7 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
+      <Button title="Show Users" onPress={handleShowUsers} />;
         <ThemedText type="title">Login to BetURLife</ThemedText>
       </ThemedView>
 
@@ -164,7 +181,7 @@ export default function TabTwoScreen() {
 
         <Text style={styles.footerText}>
           Don't have an account?{' '}
-          <Text style={styles.link} onPress={() => router.push("/explore")}>
+          <Text style={styles.link} onPress={() => router.push("/(auth)/register")}>
             Register here
           </Text>
         </Text>
