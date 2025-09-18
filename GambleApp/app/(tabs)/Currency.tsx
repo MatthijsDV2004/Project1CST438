@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter, Link } from 'expo-router';
+import { useSQLiteContext } from "expo-sqlite";
+
 
 const router = useRouter();
 
 export default function PurchaseScreen() {
+  const db = useSQLiteContext();
   const [totalCredits, setTotalCredits] = useState<number>(0);
   const [lastSelected, setLastSelected] = useState<number | null>(null);
   const navigation = useNavigation();
