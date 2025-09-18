@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
+  Button,
   ActivityIndicator,
   Pressable,
   StyleSheet,
@@ -16,20 +17,36 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
-import {resetPassword} from "../../src/auth";
-//Used figma to Create a design for the Sign Up Page
+import { verifyLogin } from "../../src/auth";
+import { useSession } from "../../lib/sessionContext";
+import { getDB } from "../../lib/db";
 
+//Used figma to Create a design for the Log In Page
 export default function TabTwoScreen() {
-  const db = useSQLiteContext()
+const { setAuthenticatedUser } = useSession();
+
+const db = useSQLiteContext();
+console.log("DB instance:", db);
+console.log(db.execAsync(`select * from users`));
+useEffect(() => {
+  (async () => {
+    try {
+      const v = await db.getFirstAsync<{ v: string }>(
+        "select sqlite_version() as v"
+      );
+      console.log("SQLite version:", v?.v);
+    } catch (e) {
+      console.error("DB still failing:", e);
+    }
+  })();
+}, [db]);
+
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    confirmPassword: '',
-    securityQuestion:'',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,18 +57,19 @@ export default function TabTwoScreen() {
   {/* this function validates the form data by checking for errors in each field either by incorrect formatting or missing values */}
   const validateForm = () => {
     const next: Record<string, string> = {};
+    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) next.email = 'Email is required';
+    else if (!emailRx.test(formData.email)) next.email = 'Enter a valid email';
     if (!formData.password) next.password = 'Password is required';
     else if (formData.password.length < 8) next.password = 'At least 8 characters';
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
       next.password = 'Use upper, lower, and a number';
     }
-    if (!formData.confirmPassword) next.confirmPassword = 'Confirm your password';
-    else if (formData.confirmPassword !== formData.password)
-      next.confirmPassword = 'Passwords do not match';
 
     setErrors(next);
     return Object.keys(next).length === 0;
   };
+  
 
   {/* this function calculates the strength of the password based on various criteria */}
   const getPasswordStrength = (password: string) => {
@@ -70,31 +88,31 @@ export default function TabTwoScreen() {
 
   {/* this function handles the form submission and communicates with the backend */}
   const handleSubmit = async () => {
-  if (!validateForm()) return;
-  setIsSubmitting(true);
-
-  try {
-    const newUser = await resetPassword(db, {
-      email: formData.email,
-      password: formData.password,
-      securityQuestion: formData.securityQuestion,
-    });
-
-    console.log("User inserted with id:", newUser.id);
-    Alert.alert("Success", "Account created successfully!");
-    router.push("/login");
-  } catch (err: any) {
-    if (err.code === "EMAIL_IN_USE") {
-      Alert.alert("Error", "That email is already registered.");
-    } else {
-      console.error("Registration error:", err);
-      Alert.alert("Error", "Registration failed. Please try again.");
+    
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+  
+    try {
+      const result = await verifyLogin(db, formData.email, formData.password);
+  
+      if (!result.ok) {
+        if (result.reason === "not_found" || result.reason === "bad_credentials") {
+          Alert.alert("Login failed", "Invalid email or password.");
+        }
+        return;
+      }
+  
+      console.log("User logged in with ID:", result.userId);
+  
+      await setAuthenticatedUser(result.userId);
+      router.replace("/");
+    } catch (err) {
+      console.error("Login error:", err);
+      Alert.alert("Error", "Could not sign in. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
+  };
 
   return (
     <ParallaxScrollView
@@ -108,13 +126,25 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Reset your password</ThemedText>
+        <ThemedText type="title">Login to BetURLife</ThemedText>
       </ThemedView>
 
       {/* Card-ish container */}
       <View style={styles.card}>
+        
 
-        {/* Email */}
+        {/* Email */}<Pressable
+  onPress={async () => {
+    try {
+      const v = await db.getFirstAsync<{ v: string }>("select sqlite_version() as v");
+      console.log("SQLite version:", v?.v);
+    } catch (e) {
+      console.error("DB test failed:", e);
+    }
+  }}
+>
+  <Text>Test DB</Text>
+</Pressable>
         <View style={styles.field}>
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -132,10 +162,10 @@ export default function TabTwoScreen() {
 
         {/* Password */}
         <View style={styles.field}>
-          <Text style={styles.label}>New Password</Text>
+          <Text style={styles.label}>Password</Text>
           <View style={styles.inputWithIcon}>
             <TextInput
-              placeholder="Enter new password"
+              placeholder="Enter password"
               value={formData.password}
               onChangeText={t => handleInputChange('password', t)}
               secureTextEntry={!showPassword}
@@ -149,65 +179,7 @@ export default function TabTwoScreen() {
             </Pressable>
           </View>
 
-          {!!formData.password && (
-            <View style={styles.strengthRow}>
-              <View style={styles.strengthBg}>
-                <View style={[styles.strengthFill, { width: `${pwStrength.pct}%` }]} />
-              </View>
-              <Text style={styles.strengthLabel}>{pwStrength.label}</Text>
-            </View>
-          )}
           {!!errors.password && <Text style={styles.error}>{errors.password}</Text>}
-        </View>
-
-        {/* Confirm password */}
-        <View style={styles.field}>
-          <Text style={styles.label}>Confirm New Password</Text>
-          <View style={styles.inputWithIcon}>
-            <TextInput
-              placeholder="Re-enter new password"
-              value={formData.confirmPassword}
-              onChangeText={t => handleInputChange('confirmPassword', t)}
-              secureTextEntry={!showConfirmPassword}
-              autoCapitalize="none"
-              style={[styles.inputFlex, errors.confirmPassword && styles.inputError]}
-            />
-            <Pressable onPress={() => setShowConfirmPassword(p => !p)} hitSlop={10}>
-              <Feather name={showConfirmPassword ? 'eye-off' : 'eye'} size={18} color="#666" />
-            </Pressable>
-          </View>
-
-          {!!formData.confirmPassword && (
-            <View style={styles.matchRow}>
-              {formData.password === formData.confirmPassword ? (
-                <>
-                  <Feather name="check-circle" size={16} color="#16a34a" />
-                  <Text style={styles.matchOk}>Passwords match</Text>
-                </>
-              ) : (
-                <>
-                  <Feather name="x-circle" size={16} color="#dc2626" />
-                  <Text style={styles.matchBad}>Passwords don&apos;t match</Text>
-                </>
-              )}
-            </View>
-          )}
-          {!!errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
-        </View>
-
-        {/* Security Question */}
-        <View style={styles.field}>
-            <Text style={styles.label}>Security Question</Text>
-            <Text>What is your favorite animal?</Text>
-            <TextInput
-                placeholder="Ex: Golden Retriever"
-                value={formData.securityQuestion}
-                onChangeText={t => handleInputChange('securityQuestion', t)}
-                keyboardType="default"
-                autoCapitalize="words"
-                textContentType="none"
-                style={[styles.input, errors.securityQuestion && styles.inputError]}
-                />
         </View>
 
         {/* Submit */}
@@ -219,19 +191,20 @@ export default function TabTwoScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Reset Password</Text>
+            <Text style={styles.buttonText}>Login</Text>
           )}
         </Pressable>
 
         <Text style={styles.footerText}>
-          <Text style={styles.link} onPress={() => router.push("/login")}>
-            Back To Login
+          Don't have an account?{' '}
+          <Text style={styles.link} onPress={() => router.push("/(auth)/register")}>
+            Register here
           </Text>
         </Text>
         <Text style={styles.footerText}>
-            Don't have an account?{' '}
-          <Text style={styles.link} onPress={() => router.push("/explore")}>
-            Register Here           
+            Forgot your password?{' '}
+          <Text style={styles.link} onPress={() => router.push("/resetPassword")}>
+            Reset Password Here           
           </Text>
         </Text>
       </View>

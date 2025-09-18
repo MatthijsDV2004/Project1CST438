@@ -14,11 +14,13 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
+import { Button } from 'react-native';
+import { useSession } from '../../lib/sessionContext';
 
 
 export default function TabTwoScreen() {
   const db = useSQLiteContext();
-
+  const { logout, user } = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
@@ -37,7 +39,7 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Hello, </ThemedText>
+        <ThemedText type="title">Logged in as: {user?.first_name} {user?.last_name}</ThemedText>
       </ThemedView>
 
       {/* Card-ish container */}
@@ -46,6 +48,18 @@ export default function TabTwoScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Currency: </Text>         
         </View>
+        <Pressable
+      style={styles.button}
+      onPress={() => router.push("/Currency")}
+    >
+      <Text style={styles.buttonText}>Add Virtual Coin</Text>
+    </Pressable>
+    <Pressable
+      style={styles.button}
+      onPress={() => router.push("/addPayment")}
+    >
+      <Text style={styles.buttonText}>Add Money ($)</Text>
+    </Pressable>
       </View>
 
       <Pressable onPress={() => router.push("/settings")}>
@@ -56,14 +70,14 @@ export default function TabTwoScreen() {
         </ThemedView>
     </Pressable>
 
-    <Pressable onPress={() => router.push("/DemoOddsScreen")}>
+    <Pressable onPress={() => router.push("/(tabs)")}>
         <ThemedView style={styles.button}>
           <ThemedText type="defaultSemiBold" style={{ color: "#ffffff" }}>
             Back
           </ThemedText>
         </ThemedView>
     </Pressable>
-
+    <Button title="Log out" onPress={logout} />
     </ParallaxScrollView>
   );
 }

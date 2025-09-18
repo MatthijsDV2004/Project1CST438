@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useRouter, Link } from 'expo-router';
+
+const router = useRouter();
 
 export default function PurchaseScreen() {
   const [totalCredits, setTotalCredits] = useState<number>(0);
@@ -29,7 +32,12 @@ export default function PurchaseScreen() {
       >
         <Text style={styles.paymentButtonText}>Add Payment Method</Text>
       </TouchableOpacity>
-
+      <Pressable
+      style={styles.button}
+      onPress={() => router.push("/profile")}
+    >
+      <Text style={styles.buttonText}>Back</Text>
+    </Pressable>
       <Text style={styles.creditsIndicator}>
         {totalCredits.toLocaleString()} Credits
       </Text>
@@ -103,6 +111,15 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 20,
     },
+    button: {
+      marginTop: 14,
+      backgroundColor: '#4f46e5',
+      borderRadius: 10,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    buttonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  
   card: {
     width: "80%",
     backgroundColor: "white",
