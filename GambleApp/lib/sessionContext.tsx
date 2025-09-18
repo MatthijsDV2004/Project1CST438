@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { initDb, User } from './db';
+import { useSQLiteContext } from 'expo-sqlite';
+
 import { restoreSession, createSession as doCreateSession, logout as sessionLogout } from './session';
 
 type SessionState = {
@@ -13,31 +15,26 @@ type SessionState = {
 const Ctx = createContext<SessionState | undefined>(undefined);
 
 export const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const db = useSQLiteContext();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const { user } = await restoreSession();
+      const { user } = await restoreSession(db);
       setUser(user);
       setLoading(false);
     })();
   }, []);
 
   const setAuthenticatedUser = async (userId: number) => {
-    await doCreateSession(userId);
-    try {
-    const { user } = await restoreSession();
+    await doCreateSession(db, userId);
+    const { user } = await restoreSession(db);
     setUser(user);
-    } catch (e) {
-      console.error("restoreSession failed:", e);
-    } finally {
-      setLoading(false);
-  }
-};
+  };
 
   const logout = async () => {
-    await sessionLogout();  // clear db + SecureStore
+    await sessionLogout(db);  // clear db + SecureStore
     setUser(null);          // reset state so isAuthenticated = false
   };
 
@@ -45,10 +42,7 @@ export const SessionProvider: React.FC<React.PropsWithChildren> = ({ children })
     user, loading, setAuthenticatedUser, logout, isAuthenticated: !!user
   }), [user, loading]);
 
-  return (
-    <Ctx.Provider value={{ user, loading, setAuthenticatedUser, logout, isAuthenticated: !!user }}>
-      {children}
-    </Ctx.Provider>);
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };
 
 export function useSession() {

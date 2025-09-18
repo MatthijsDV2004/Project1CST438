@@ -48,6 +48,18 @@ export default function TabTwoScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Currency: </Text>         
         </View>
+        <Pressable
+      style={styles.button}
+      onPress={() => router.push("/Currency")}
+    >
+      <Text style={styles.buttonText}>Add Virtual Coin</Text>
+    </Pressable>
+    <Pressable
+      style={styles.button}
+      onPress={() => router.push("/addPayment")}
+    >
+      <Text style={styles.buttonText}>Add Money ($)</Text>
+    </Pressable>
       </View>
 
       <Pressable onPress={() => router.push("/settings")}>

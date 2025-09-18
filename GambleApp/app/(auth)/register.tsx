@@ -21,6 +21,7 @@ import {registerUser} from "../../src/auth";
 
 export default function TabTwoScreen() {
   const db = useSQLiteContext()
+  console.log("DB instance:", db);
   const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',

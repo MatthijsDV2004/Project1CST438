@@ -1,12 +1,13 @@
 import * as SecureStore from 'expo-secure-store';
 import { v4 as uuidv4 } from 'uuid';
 import { getDB, Session, User } from './db';
+import type { SQLiteDatabase } from 'expo-sqlite';
+
 
 const SECURE_TOKEN_KEY = 'session_token';
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-export async function createSession(user_id: number) {
-  const db = await getDB();
+export async function createSession(db: SQLiteDatabase, user_id: number) {
   const token = uuidv4();
   const now = Date.now();
   const expires = now + SESSION_TTL_MS;
@@ -21,8 +22,7 @@ export async function createSession(user_id: number) {
   return token;
 }
 
-export async function restoreSession(): Promise<{ user: User | null }> {
-  const db = await getDB();
+export async function restoreSession(db: SQLiteDatabase): Promise<{ user: User | null }> {
   const token = await SecureStore.getItemAsync(SECURE_TOKEN_KEY);
   if (!token) return { user: null };
 
@@ -31,20 +31,20 @@ export async function restoreSession(): Promise<{ user: User | null }> {
     [token]
   );
   if (!session || session.expires_at <= Date.now()) {
-    await logout();
+    await logout(db);
     return { user: null };
   }
 
   const user = await db.getFirstAsync<User>('SELECT * FROM users WHERE id = ?', [session.user_id]);
   if (!user) {
-    await logout();
+    await logout(db);
     return { user: null };
   }
   return { user };
 }
 
-export async function logout() {
-  const db = await getDB();
+export async function logout(db: SQLiteDatabase) {
+  
   const token = await SecureStore.getItemAsync(SECURE_TOKEN_KEY);
   if (token) {
     await db.runAsync("DELETE FROM sessions WHERE token = ?", [token]);

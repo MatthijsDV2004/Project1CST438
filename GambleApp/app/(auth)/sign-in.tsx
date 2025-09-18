@@ -26,6 +26,7 @@ export default function TabTwoScreen() {
 const { setAuthenticatedUser } = useSession();
 
 const db = useSQLiteContext();
+console.log("DB instance:", db);
 console.log(db.execAsync(`select * from users`));
 useEffect(() => {
   (async () => {
@@ -104,7 +105,7 @@ useEffect(() => {
       console.log("User logged in with ID:", result.userId);
   
       await setAuthenticatedUser(result.userId);
-      router.replace("../(tabs)/index");
+      router.replace("/");
     } catch (err) {
       console.error("Login error:", err);
       Alert.alert("Error", "Could not sign in. Please try again.");
@@ -132,7 +133,18 @@ useEffect(() => {
       <View style={styles.card}>
         
 
-        {/* Email */}
+        {/* Email */}<Pressable
+  onPress={async () => {
+    try {
+      const v = await db.getFirstAsync<{ v: string }>("select sqlite_version() as v");
+      console.log("SQLite version:", v?.v);
+    } catch (e) {
+      console.error("DB test failed:", e);
+    }
+  }}
+>
+  <Text>Test DB</Text>
+</Pressable>
         <View style={styles.field}>
           <Text style={styles.label}>Email</Text>
           <TextInput
