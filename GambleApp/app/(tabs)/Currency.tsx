@@ -15,10 +15,10 @@ export default function PurchaseScreen() {
   
   const options = [ //will update later with more acurate resemblance for curency values
     { price: 4.99, credits: 500, img: require("../../assets/images/vbuck1.png") },
-    { price: 9.99, credits: 1200, img: require("../../assets/images/vbuck1.png") },
-    { price: 24.99, credits: 3500, img: require("../../assets/images/vbuck1.png") },
-    { price: 49.99, credits: 7500, img: require("../../assets/images/vbuck1.png") },
-    { price: 99.99, credits: 16000, img: require("../../assets/images/vbuck1.png") },
+    { price: 9.99, credits: 1200, img: require("../../assets/images/vbuck2.png") },
+    { price: 24.99, credits: 3500, img: require("../../assets/images/vbuck3.png") },
+    { price: 49.99, credits: 7500, img: require("../../assets/images/vbuck4.png") },
+    { price: 99.99, credits: 16000, img: require("../../assets/images/vbuck5.png") },
   ];
 
   const handlePurchase = (credits: number, idx: number) => {
