@@ -3,12 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Pressable 
 import { useNavigation } from "@react-navigation/native";
 import { useRouter, Link } from 'expo-router';
 import { useSQLiteContext } from "expo-sqlite";
+import { useSession } from '../../lib/sessionContext';
 
 
 const router = useRouter();
 
 export default function PurchaseScreen() {
   const db = useSQLiteContext();
+  const {user} = useSession();
   const [totalCredits, setTotalCredits] = useState<number>(0);
   const [lastSelected, setLastSelected] = useState<number | null>(null);
   const navigation = useNavigation();
@@ -25,7 +27,7 @@ export default function PurchaseScreen() {
     setTotalCredits(prev => prev + credits); // adds credits to total (balance)
     setLastSelected(idx);
   };
-
+  {user?.currency}  setTotalCredits;
   return (
     //total credits indicator shown on the top right
     <View style={styles.container}>
