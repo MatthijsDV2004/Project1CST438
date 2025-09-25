@@ -34,7 +34,7 @@ export default function PurchaseScreen() {
       </TouchableOpacity>
       <Pressable
       style={styles.button}
-      onPress={() => router.push("/Profile")}
+      onPress={() => router.push("/profile")}
     >
       <Text style={styles.buttonText}>Back</Text>
     </Pressable>
