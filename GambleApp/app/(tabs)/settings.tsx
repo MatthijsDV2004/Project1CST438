@@ -52,7 +52,7 @@ export default function TabTwoScreen() {
 
         {/* email display */}
         <View style={styles.field}>
-        <Text style={styles.label}>Email: </Text>         
+        <Text style={styles.label}>Email: {user?.email} </Text>         
         </View>
 
         <Text>
