@@ -2,12 +2,12 @@
 ### a Gambling Predictions App
 Gamble away all your money and win big!
 
-## Overview:
+## Overview
 We worked on a Sports betting App that displays live and upcoming events along with the odds of winning using an API that retrieves odds from different markets. Not only does it display the odds, but it also allows users to place bets using virtual currency.
 
 Link to API: https://the-odds-api.com/
 
-## Introduction:
+## Introduction
 #### How was communication managed? <br>
 We communicated via Discord and class team meetings.
 
@@ -18,9 +18,9 @@ We started with roughly 15 issues.
 We’ve completed 21 issues at the end of the project.
 
 
-## Team Retrospective:
+## Team Retrospective
 
-### Eduardo: <br>
+### Eduardo <br>
 1. Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me	<br>
 1. Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is%3Aissue%20state%3Aclosed
 
@@ -41,7 +41,7 @@ I think although we did a great job, I would have loved to dedicate more time to
 #### Most valuable thing learned?
 Well, I learned first how to use React Native, which was pretty new to me. But what I do take away from this project is the importance of communication and being able to have things done in a timely manner.
 
-### Abel: <br>
+### Abel <br>
 1. Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is%3Apr+is%3Aclosed <br>
 1. Link to issues:
 https://github.com/MatthijsDV2004/Project1CST438/issues/27
@@ -66,7 +66,7 @@ Maybe use a different API, as the api we used was financially driven, and it cou
 #### Most valuable thing learned?
 The most valuable thing I learned was overall learning how to use React Native, as this was my very first time building an app on this engine, as I had never done it before.
 
-### Matthijs De Vries: <br>
+### Matthijs De Vries <br>
 1. Link to pull requests: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is:pr+is:closed+author:MatthijsDV2004 <br>
 1. Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is:issue%20state:closed%20assignee:MatthijsDV2004
 
@@ -88,7 +88,7 @@ I would have done less overcomplicating. There was so much extra stuff I did for
 The most valuable thing was that I never used React Native before, so it was very valuable to learn how to set up a database and user sessions.
 
 
-### Michael Garcia: <br>
+### Michael Garcia <br>
 1. Michael’s pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me <br>
 1. Michael’s Issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Aissue%20author%3A%40me
 
