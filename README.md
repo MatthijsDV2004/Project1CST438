@@ -21,7 +21,7 @@ We’ve completed 20 issues at the end of the project.
 #### Team Retrospective:
 
 Eduardo:
-Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me	
+Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me	<br>
 Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is%3Aissue%20state%3Aclosed
 
 Eduardo worked mostly on the frontend of the app giving it a nice smooth display for users to be able to explore. In addition to that he connected the Sports API to the explore page and implemented the registration logic for it to be secure and efficient for users to register.
