@@ -2,12 +2,12 @@
 #### a Gambling Predictions App
 Gamble away all your money and win big!
 
-Overview:
+#### Overview:
 We worked on a Sports betting App that displays live and upcoming events along with the odds of winning using an API that retrieves odds from different markets. Not only does it display the odds, but it also allows users to place bets using virtual currency.
 
 Link to API: https://the-odds-api.com/
 
-Introduction:
+####Introduction:
 How was communication managed?
 We communicated via Discord and class team meetings.
 
@@ -18,9 +18,9 @@ How many stories/issues were completed?
 We’ve completed 20 issues at the end of the project.
 
 
-Team Retrospective:
+#### Team Retrospective:
 
-Eduardo:
+##### Eduardo:
 	Link to pull request: here
 	Link to issues: here
 
