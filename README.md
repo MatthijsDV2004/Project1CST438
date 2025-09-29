@@ -42,8 +42,8 @@ I think although we did a great job, I would have loved to dedicate more time to
 Well, I learned first how to use React Native, which was pretty new to me. But what I do take away from this project is the importance of communication and being able to have things done in a timely manner.
 
 ### Abel: <br>
-Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is%3Apr+is%3Aclosed <br>
-Link to issues:
+1. Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is%3Apr+is%3Aclosed <br>
+1. Link to issues:
 https://github.com/MatthijsDV2004/Project1CST438/issues/27
 https://github.com/MatthijsDV2004/Project1CST438/issues/21
 https://github.com/MatthijsDV2004/Project1CST438/issues/13
@@ -67,8 +67,8 @@ Maybe use a different API, as the api we used was financially driven, and it cou
 The most valuable thing I learned was overall learning how to use React Native, as this was my very first time building an app on this engine, as I had never done it before.
 
 ### Matthijs De Vries: <br>
-Link to pull requests: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is:pr+is:closed+author:MatthijsDV2004 <br>
-Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is:issue%20state:closed%20assignee:MatthijsDV2004
+1. Link to pull requests: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is:pr+is:closed+author:MatthijsDV2004 <br>
+1. Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is:issue%20state:closed%20assignee:MatthijsDV2004
 
 Matthijs worked on all of the backend code. He added sessions and made the login and registration work with the database. Also implemented some frontend features, like the current bets and previous bets page.
 
@@ -89,9 +89,8 @@ The most valuable thing was that I never used React Native before, so it was ver
 
 
 ### Michael Garcia: <br>
-Michael’s pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me <br>
-Michael’s Issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Aissue%20author%3A%40me
-
+1. Michael’s pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me <br>
+1. Michael’s Issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Aissue%20author%3A%40me
 
 Michael was mainly in charge of the front end and wiring each page together, and deciding on some simple designs in some pages. Main contributions were the button wiring and the majority of the front-end pages.
 
