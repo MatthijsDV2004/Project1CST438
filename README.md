@@ -8,13 +8,13 @@ We worked on a Sports betting App that displays live and upcoming events along w
 Link to API: https://the-odds-api.com/
 
 ## Introduction:
-How was communication managed?
+#### How was communication managed? <br>
 We communicated via Discord and class team meetings.
 
-How many stories/issues were initially considered?
+#### How many stories/issues were initially considered? <br>
 We started with roughly 15 issues.
 
-How many stories/issues were completed?
+#### How many stories/issues were completed? <br>
 We’ve completed 20 issues at the end of the project.
 
 
