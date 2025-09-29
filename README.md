@@ -15,7 +15,7 @@ We communicated via Discord and class team meetings.
 We started with roughly 15 issues.
 
 #### How many stories/issues were completed? <br>
-We’ve completed 20 issues at the end of the project.
+We’ve completed 21 issues at the end of the project.
 
 
 ## Team Retrospective:
