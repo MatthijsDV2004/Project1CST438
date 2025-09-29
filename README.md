@@ -5,7 +5,8 @@ Gamble away all your money and win big!
 ## Overview
 We worked on a Sports betting App that displays live and upcoming events along with the odds of winning using an API that retrieves odds from different markets. Not only does it display the odds, but it also allows users to place bets using virtual currency.
 
-Link to API: https://the-odds-api.com/
+Link to API: https://the-odds-api.com/ <br>
+Link to Repo https://github.com/MatthijsDV2004/Project1CST438
 
 ## Introduction
 #### How was communication managed? <br>
