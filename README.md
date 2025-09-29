@@ -20,7 +20,7 @@ We’ve completed 20 issues at the end of the project.
 
 #### Team Retrospective:
 
-Eduardo:
+Eduardo: <br>
 Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me	<br>
 Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is%3Aissue%20state%3Aclosed
 
@@ -41,8 +41,8 @@ I think although we did a great job, I would have loved to dedicate more time to
 Most valuable thing learned?
 Well, I learned first how to use React Native, which was pretty new to me. But what I do take away from this project is the importance of communication and being able to have things done in a timely manner.
 
-Abel:
-Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is%3Apr+is%3Aclosed
+Abel: <br>
+Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is%3Apr+is%3Aclosed <br>
 Link to issues:
 https://github.com/MatthijsDV2004/Project1CST438/issues/27
 https://github.com/MatthijsDV2004/Project1CST438/issues/21
@@ -66,8 +66,8 @@ Maybe use a different API, as the api we used was financially driven, and it cou
 Most valuable thing learned?
 The most valuable thing I learned was overall learning how to use React Native, as this was my very first time building an app on this engine, as I had never done it before.
 
-Matthijs De Vries:
-Link to pull requests: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is:pr+is:closed+author:MatthijsDV2004
+Matthijs De Vries: <br>
+Link to pull requests: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is:pr+is:closed+author:MatthijsDV2004 <br>
 Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is:issue%20state:closed%20assignee:MatthijsDV2004
 
 Matthijs worked on all of the backend code. He added sessions and made the login and registration work with the database. Also implemented some frontend features, like the current bets and previous bets page.
@@ -88,8 +88,8 @@ Most valuable thing learned?
 The most valuable thing was that I never used React Native before, so it was very valuable to learn how to set up a database and user sessions.
 
 
-Michael Garcia:
-Michael’s pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me
+Michael Garcia: <br>
+Michael’s pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me <br>
 Michael’s Issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Aissue%20author%3A%40me
 
 
