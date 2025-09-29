@@ -7,7 +7,7 @@ We worked on a Sports betting App that displays live and upcoming events along w
 
 Link to API: https://the-odds-api.com/
 
-####Introduction:
+#### Introduction:
 How was communication managed?
 We communicated via Discord and class team meetings.
 
@@ -21,8 +21,8 @@ We’ve completed 20 issues at the end of the project.
 #### Team Retrospective:
 
 Eduardo:
-	Link to pull request: here
-	Link to issues: here
+	Link to pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me
+	Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is%3Aissue%20state%3Aclosed
 
 Eduardo worked mostly on the frontend of the app giving it a nice smooth display for users to be able to explore. In addition to that he connected the Sports API to the explore page and implemented the registration logic for it to be secure and efficient for users to register.
 
@@ -67,8 +67,8 @@ Most valuable thing learned?
 The most valuable thing I learned was overall learning how to use React Native, as this was my very first time building an app on this engine, as I had never done it before.
 
 Matthijs De Vries:
-Link to pull requests: link
-Link to issues: link
+Link to pull requests: https://github.com/MatthijsDV2004/Project1CST438/pulls?q=is:pr+is:closed+author:MatthijsDV2004
+Link to issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=is:issue%20state:closed%20assignee:MatthijsDV2004
 
 Matthijs worked on all of the backend code. He added sessions and made the login and registration work with the database. Also implemented some frontend features, like the current bets and previous bets page.
 
@@ -89,8 +89,9 @@ The most valuable thing was that I never used React Native before, so it was ver
 
 
 Michael Garcia:
-Michael’s pull request
-Michael’s Issues
+Michael’s pull request: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Apr%20author%3A%40me
+Michael’s Issues: https://github.com/MatthijsDV2004/Project1CST438/issues?q=state%3Aclosed%20is%3Aissue%20author%3A%40me
+
 
 Michael was mainly in charge of the front end and wiring each page together, and deciding on some simple designs in some pages. Main contributions were the button wiring and the majority of the front-end pages.
 
@@ -110,7 +111,7 @@ What is the most valuable thing you learned?
 I think the most valuable thing I learned was using React Native.
 
 
-Conclusion
+#### Conclusion
 How successful was the project?
 The project as a whole was very successful, as we hit a lot of marks that real apps have.
 
