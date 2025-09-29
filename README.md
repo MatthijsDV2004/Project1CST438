@@ -20,7 +20,7 @@ We’ve completed 20 issues at the end of the project.
 
 #### Team Retrospective:
 
-##### Eduardo:
+Eduardo:
 	Link to pull request: here
 	Link to issues: here
 
