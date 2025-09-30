@@ -8,6 +8,7 @@ export type Bet = {
   sport: string;
   team1: string;
   team2: string;
+  selected_team: string;
   bett_amount: number;
   is_current_bett: 0 | 1;
   moneyline?: number | null;
@@ -39,22 +40,24 @@ export async function placeBet(
       sport TEXT NOT NULL,
       team1 TEXT NOT NULL,
       team2 TEXT NOT NULL,
+      selected_team TEXT NOT NULL, 
       bett_amount REAL NOT NULL,
       is_current_bett INTEGER NOT NULL DEFAULT 1,
       moneyline REAL,
-      time TEXT NOT NULL
+      time DATETIME NOT NULL
     )`
   );
 
   const result: any = await db.runAsync(
     `INSERT INTO betts (
-      user_id, sport, team1, team2, bett_amount, is_current_bett, moneyline, time
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      user_id, sport, team1, team2, selected_team, bett_amount, is_current_bett, moneyline, time
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       input.user_id,
       input.sport,
       input.team1,
       input.team2,
+      input.selected_team,
       input.bett_amount,
       input.is_current_bett ?? 1,
       input.moneyline ?? null,
@@ -141,6 +144,7 @@ export async function initDb(db: SQLite.SQLiteDatabase) {
       sport TEXT NOT NULL,
       team1 TEXT NOT NULL,
       team2 TEXT NOT NULL,
+      selected_team TEXT NOT NULL, 
       bett_amount INTEGER NOT NULL,
       is_current_bett BOOLEAN NOT NULL,
       moneyline INTEGER,

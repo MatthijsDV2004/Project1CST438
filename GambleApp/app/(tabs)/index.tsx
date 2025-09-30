@@ -75,6 +75,7 @@ export default function SportsBetExplorerPage() {
     team2: string;
     moneyline?: number | null;
     time: string;
+    selected_team: string;
   } | null>(null);
 
   // --- load matches ---
@@ -310,6 +311,7 @@ export default function SportsBetExplorerPage() {
                                   team2: selectedMatch.away_team,
                                   moneyline: o.price,
                                   time: selectedMatch.commence_time,
+                                  selected_team: o.name
                                 });
                                 setBetSheetOpen(true);
                               }}

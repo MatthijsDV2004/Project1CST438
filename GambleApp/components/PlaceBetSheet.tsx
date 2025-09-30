@@ -21,6 +21,7 @@ export type MatchLike = {
   team2: string;
   moneyline?: number | null;
   time: string; // ISO
+  selected_team: string;
 };
 
 type Props = {
@@ -74,10 +75,11 @@ const betTooLarge = betAmount > credits;
         sport: match.sport,
         team1: match.team1,
         team2: match.team2,
+        selected_team: match.selected_team,
         bett_amount: Number(amount),
         is_current_bett: 1,
         moneyline: match.moneyline ?? null,
-        time: match.time,
+        time: Date.now().toString(),
       };
       const id = await placeBet(db, payload);
       
@@ -100,6 +102,9 @@ const betTooLarge = betAmount > credits;
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           <Text style={styles.title}>Place Bet</Text>
+          <Text style={styles.subtitlez}>
+            {match.selected_team} 
+          </Text>
           <Text style={styles.subtitle}>
             {match.team1} vs {match.team2}
           </Text>
@@ -166,6 +171,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 20, fontWeight: "700" },
   subtitle: { marginTop: 4, opacity: 0.8 },
+  subtitlez: { fontSize: 15, marginTop: 4, opacity: 0.8, fontWeight: "600" },
   moneyline: { marginTop: 4, opacity: 0.8 },
   label: { marginTop: 16, marginBottom: 6, fontWeight: "600" },
   input: {

@@ -5,6 +5,7 @@ import { useSession } from '../../lib/sessionContext';
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect } from "expo-router";
 import emitter from "@/lib/eventBus";
+import { decimalToAmerican } from "@/components/PlaceBetSheet";
 
 type Bett = {
   id: number;
@@ -16,6 +17,7 @@ type Bett = {
   is_current_bett: number;
   moneyline?: number;
   time: string;
+  selected_team: string;
 };
 export default function BetsScreen() {
 const db = useSQLiteContext()
@@ -67,8 +69,9 @@ const db = useSQLiteContext()
       <Text style={styles.match}>
         {item.team1} vs {item.team2}
       </Text>
+      <Text>Selected Team: {item.selected_team}</Text>
       <Text>Stake: {item.bett_amount}</Text>
-      <Text>Odds: {item.moneyline}</Text>
+      <Text>Odds: {decimalToAmerican(item.moneyline)}</Text>
       <Text>
         Status: {item.is_current_bett ? "Open" : "Settled"}
       </Text>
