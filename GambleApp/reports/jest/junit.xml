@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="15.222">
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-09-09T22:59:45" time="14.925" tests="1">
-    <testcase classname=" renders the app root without crashing" name=" renders the app root without crashing" time="0.049">
+<testsuites name="jest tests" tests="9" failures="0" errors="0" time="0.775">
+  <testsuite name="DB functions" errors="0" failures="0" skipped="0" timestamp="2025-09-30T20:19:19" time="0.451" tests="9">
+    <testcase classname="DB functions placeBet inserts a bet and returns the last insert row id" name="DB functions placeBet inserts a bet and returns the last insert row id" time="0.002">
+    </testcase>
+    <testcase classname="DB functions placeBet returns 0 if insert result has no lastInsertRowId" name="DB functions placeBet returns 0 if insert result has no lastInsertRowId" time="0">
+    </testcase>
+    <testcase classname="DB functions getCurrentBets queries bets with is_current_bett = 1" name="DB functions getCurrentBets queries bets with is_current_bett = 1" time="0.001">
+    </testcase>
+    <testcase classname="DB functions getPreviousBets queries bets with is_current_bett = 0" name="DB functions getPreviousBets queries bets with is_current_bett = 0" time="0">
+    </testcase>
+    <testcase classname="DB functions getUserCredits returns currency from row" name="DB functions getUserCredits returns currency from row" time="0">
+    </testcase>
+    <testcase classname="DB functions getUserCredits returns 0 if no row" name="DB functions getUserCredits returns 0 if no row" time="0">
+    </testcase>
+    <testcase classname="DB functions addCredits runs update with correct params" name="DB functions addCredits runs update with correct params" time="0.001">
+    </testcase>
+    <testcase classname="DB functions subtractCredits runs update with MAX to avoid negatives" name="DB functions subtractCredits runs update with MAX to avoid negatives" time="0">
+    </testcase>
+    <testcase classname="DB functions initDb executes schema setup" name="DB functions initDb executes schema setup" time="0.024">
     </testcase>
   </testsuite>
 </testsuites>
