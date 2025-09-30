@@ -17,9 +17,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSQLiteContext } from "expo-sqlite";
 import {registerUser} from "../../src/auth";
+import { useSession } from '@/lib/sessionContext';
 //Used figma to Create a design for the Sign Up Page
 
 export default function TabTwoScreen() {
+  const { setAuthenticatedUser } = useSession();
   const db = useSQLiteContext()
   console.log("DB instance:", db);
   const router = useRouter();
@@ -92,7 +94,8 @@ export default function TabTwoScreen() {
 
     console.log("User inserted with id:", newUser.id);
     Alert.alert("Success", "Account created successfully!");
-    router.push("/sign-in");
+    await setAuthenticatedUser(newUser.id);
+    router.push("/");
   } catch (err: any) {
     if (err.code === "EMAIL_IN_USE") {
       Alert.alert("Error", "That email is already registered.");

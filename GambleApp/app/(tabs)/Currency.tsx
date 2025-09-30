@@ -1,16 +1,26 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Pressable } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useRouter, Link } from 'expo-router';
-
-const router = useRouter();
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Pressable,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { useSession } from "../../lib/sessionContext";
+import { addCredits } from "../../lib/db";
 
 export default function PurchaseScreen() {
-  const [totalCredits, setTotalCredits] = useState<number>(0);
+  const router = useRouter();
+  const db = useSQLiteContext();
+  const { user, credits, refreshCredits } = useSession();
+
   const [lastSelected, setLastSelected] = useState<number | null>(null);
-  const navigation = useNavigation();
-  
-  const options = [ //will update later with more acurate resemblance for curency values
+
+  const options = [
     { price: 4.99, credits: 500, img: require("../../assets/images/vbuck1.png") },
     { price: 9.99, credits: 1200, img: require("../../assets/images/vbuck1.png") },
     { price: 24.99, credits: 3500, img: require("../../assets/images/vbuck1.png") },
@@ -18,56 +28,54 @@ export default function PurchaseScreen() {
     { price: 99.99, credits: 16000, img: require("../../assets/images/vbuck1.png") },
   ];
 
-  const handlePurchase = (credits: number, idx: number) => {
-    setTotalCredits(prev => prev + credits); // adds credits to total (balance)
+  const handlePurchase = async (amount: number, idx: number) => {
+    if (!user?.id) return;
+    await addCredits(db, user.id, amount);
+    await refreshCredits(); // updates global context → all pages see it
     setLastSelected(idx);
   };
 
   return (
-    //total credits indicator shown on the top right
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.paymentButton}
-        onPress={() => navigation.navigate("addPayment" as never)}
+        onPress={() => router.push("/addPayment")}
       >
         <Text style={styles.paymentButtonText}>Add Payment Method</Text>
       </TouchableOpacity>
-      <Pressable
-      style={styles.button}
-      onPress={() => router.push("/profile")}
-    >
-      <Text style={styles.buttonText}>Back</Text>
-    </Pressable>
+
+      <Pressable style={styles.button} onPress={() => router.push("/profile")}>
+        <Text style={styles.buttonText}>Back</Text>
+      </Pressable>
+
+      {/* 👇 Use credits from context */}
       <Text style={styles.creditsIndicator}>
-        {totalCredits.toLocaleString()} Credits
+        {credits.toLocaleString()} Credits
       </Text>
 
       <Text style={styles.title}>Buy Credits</Text>
-      
+
       <ScrollView>
-
-      <View style={styles.grid}>
-        {options.map((opt, idx) => {
-          const isSelected = idx === lastSelected;
-          return (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.card, isSelected && styles.selectedCard]}
-              onPress={() => handlePurchase(opt.credits, idx)}
-            >
-              <Image source={opt.img} style={styles.image} resizeMode="contain" />
-
-              <Text style={styles.creditsText}>{opt.credits} Credits</Text>
-              <Text style={styles.price}>${opt.price.toFixed(2)}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+        <View style={styles.grid}>
+          {options.map((opt, idx) => {
+            const isSelected = idx === lastSelected;
+            return (
+              <TouchableOpacity
+                key={idx}
+                style={[styles.card, isSelected && styles.selectedCard]}
+                onPress={() => handlePurchase(opt.credits, idx)}
+              >
+                <Image source={opt.img} style={styles.image} resizeMode="contain" />
+                <Text style={styles.creditsText}>{opt.credits} Credits</Text>
+                <Text style={styles.price}>${opt.price.toFixed(2)}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </ScrollView>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -76,7 +84,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
-   paymentButton: {
+  paymentButton: {
     backgroundColor: "#007AFF",
     paddingVertical: 12,
     borderRadius: 10,
@@ -110,16 +118,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 16,
     marginBottom: 20,
-    },
-    button: {
-      marginTop: 14,
-      backgroundColor: '#4f46e5',
-      borderRadius: 10,
-      paddingVertical: 12,
-      alignItems: 'center',
-    },
-    buttonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
-  
+  },
+  button: {
+    marginTop: 14,
+    backgroundColor: "#4f46e5",
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   card: {
     width: "80%",
     backgroundColor: "white",

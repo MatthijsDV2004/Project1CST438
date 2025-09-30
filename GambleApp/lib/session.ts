@@ -7,6 +7,17 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 const SECURE_TOKEN_KEY = 'session_token';
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
+export async function writeSessionFast(db: SQLiteDatabase, userId: number, token: string) {
+  const nowIso = new Date().toISOString();
+  await Promise.all([
+    db.runAsync(
+      "INSERT OR REPLACE INTO sessions (user_id, token, created_at) VALUES (?, ?, ?)",
+      [userId, token, nowIso]
+    ),
+    SecureStore.setItemAsync(SECURE_TOKEN_KEY, token),
+  ]);
+}
+
 export async function createSession(db: SQLiteDatabase, user_id: number) {
   const token = uuidv4();
   const now = Date.now();
@@ -44,9 +55,9 @@ export async function restoreSession(db: SQLiteDatabase): Promise<{ user: User |
 }
 
 export async function logout(db: SQLiteDatabase) {
-  
   const token = await SecureStore.getItemAsync(SECURE_TOKEN_KEY);
   console.log("Logging out, found token:", token);
+  
   if (token) {
     await db.runAsync("DELETE FROM sessions WHERE token = ?", [token]);
     console.log("Deleted session from DB");

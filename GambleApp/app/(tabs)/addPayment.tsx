@@ -1,10 +1,9 @@
-import React from "react";
+
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Image} from "react-native";
-import { Pressable,Button } from 'react-native';
 import { useRouter } from "expo-router";
 
-const router = useRouter();
 export default function AddPayment() {
+  const router = useRouter();
   const handlePress = (method: string) => {
     Alert.alert(method, "Coming Soon!");
   };
@@ -33,12 +32,9 @@ export default function AddPayment() {
           <Image source={require("../../assets/images/cc.png")} style={styles.icon} />
         </View>
       </TouchableOpacity>
-      <Pressable
-      style={styles.button}
-      onPress={() => router.push("/Profile")}
-    >
-      <Text style={styles.buttonText}>Back</Text>
-    </Pressable>
+      <TouchableOpacity style={styles.card} onPress={() => router.push("/profile")}>
+        <Text style={styles.buttonText}>Back</Text>
+      </TouchableOpacity>
     </View>
   );
 }

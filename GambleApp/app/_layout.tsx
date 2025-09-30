@@ -1,7 +1,7 @@
 import 'react-native-get-random-values';
-import { registerRootComponent } from 'expo';
+
 import { Slot, useRouter, useSegments } from 'expo-router';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { SessionProvider, useSession } from '../lib/sessionContext';
 import { ActivityIndicator, View } from 'react-native';
 import { SQLiteProvider } from "expo-sqlite";
