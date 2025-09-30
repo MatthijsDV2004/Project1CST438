@@ -20,7 +20,7 @@ import { useSession } from '../../lib/sessionContext';
 
 export default function TabTwoScreen() {
   const db = useSQLiteContext();
-  const { logout, user } = useSession();
+  const { logout, user, credits } = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
@@ -46,7 +46,7 @@ export default function TabTwoScreen() {
       <View style={styles.card}>
         {/* Currency display */}
         <View style={styles.field}>
-          <Text style={styles.label}>Currency: {user?.currency} Credits</Text>         
+          <Text style={styles.label}>Currency: {credits.toLocaleString()} Credits</Text>        
         </View>
         <Pressable
       style={styles.button}

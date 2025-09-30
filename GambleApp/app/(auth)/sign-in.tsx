@@ -133,18 +133,7 @@ useEffect(() => {
       <View style={styles.card}>
         
 
-        {/* Email */}<Pressable
-  onPress={async () => {
-    try {
-      const v = await db.getFirstAsync<{ v: string }>("select sqlite_version() as v");
-      console.log("SQLite version:", v?.v);
-    } catch (e) {
-      console.error("DB test failed:", e);
-    }
-  }}
->
-  <Text>Test DB</Text>
-</Pressable>
+        {/* Email */}
         <View style={styles.field}>
           <Text style={styles.label}>Email</Text>
           <TextInput
