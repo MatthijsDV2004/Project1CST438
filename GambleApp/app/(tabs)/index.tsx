@@ -207,7 +207,7 @@ export default function SportsBetExplorerPage() {
     
     <View>
       <View style={styles.headerRow}>
-        <Text style={styles.header}>SportsBet Explorer</Text>
+        <Text style={styles.header}>BetURLife</Text>
         <Pressable onPress={() => router.push("/bets")} hitSlop={8}>
           <Ionicons style={styles.icon} name="ticket-outline" size={22} color={C.text} />
         </Pressable>
