@@ -29,19 +29,31 @@ type Props = {
   match: MatchLike;
   onPlaced?: (insertedId: number) => void;
 };
-
+export function decimalToAmerican(decimal: number): string {
+  if (decimal >= 2.0) {
+    return `+${Math.round((decimal - 1) * 100)}`;
+  } else {
+    return `${Math.round(-100 / (decimal - 1))}`;
+  }
+}
 export default function PlaceBetSheet({ visible, onClose, match, onPlaced }: Props) {
   const db = useSQLiteContext();
   const router = useRouter();
-  const { user } = useSession();
+  const { user, credits, refreshCredits } = useSession();
   const [amount, setAmount] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
 
   const canSubmit = useMemo(() => {
     const n = Number(amount);
-    return !Number.isNaN(n) && n > 0;
-  }, [amount]);
-
+    return !Number.isNaN(n) && n > 0 && n <= (credits ?? 0);
+  }, [amount, credits]);
+const enoughCredits = useMemo(() => {
+    const n = Number(amount);
+    return n <= (credits ?? 0);
+  }, [amount, credits]);
+  const betAmount = Number(amount);
+const willHaveLeft = credits - (isNaN(betAmount) ? 0 : betAmount);
+const betTooLarge = betAmount > credits;
   const submit = useCallback(async () => {
     if (!user?.id) {
       Alert.alert("Not signed in", "Please log in first.");
@@ -49,6 +61,10 @@ export default function PlaceBetSheet({ visible, onClose, match, onPlaced }: Pro
     }
     if (!canSubmit) {
       Alert.alert("Invalid amount", "Enter a number greater than zero.");
+      return;
+    }
+    if(!enoughCredits) {
+      Alert.alert("Insufficient credits", "You do not have enough credits to place this bet.");
       return;
     }
     setSubmitting(true);
@@ -64,10 +80,12 @@ export default function PlaceBetSheet({ visible, onClose, match, onPlaced }: Pro
         time: match.time,
       };
       const id = await placeBet(db, payload);
+      
       onPlaced?.(id);
       setAmount("");
       onClose();
       await subtractCredits(db, user.id, Number(amount));
+      await refreshCredits(); // update global context
       // Navigate to the Betts tab to show the new bet (adjust route if needed)
       router.push("/bets");
     } catch (e: any) {
@@ -86,9 +104,9 @@ export default function PlaceBetSheet({ visible, onClose, match, onPlaced }: Pro
             {match.team1} vs {match.team2}
           </Text>
           {match.moneyline != null && (
-            <Text style={styles.moneyline}>Moneyline: {String(match.moneyline)}</Text>
+            <Text style={styles.moneyline}>Moneyline: {String(decimalToAmerican(match.moneyline))}</Text>
           )}
-
+          <Text style={styles.balance}>Balance: {credits.toLocaleString()} Credits</Text>
           <Text style={styles.label}>Amount</Text>
           <TextInput
             testID="bet-amount-input"
@@ -99,7 +117,18 @@ export default function PlaceBetSheet({ visible, onClose, match, onPlaced }: Pro
             onChangeText={setAmount}
             autoFocus
           />
+    {!isNaN(betAmount) && betAmount > 0 && !betTooLarge && (
+          <Text style={styles.afterBalance}>
+            Balance after bet: {willHaveLeft.toLocaleString()} Credits
+          </Text>
+        )}
 
+        {/* Error if too large */}
+        {betTooLarge && (
+          <Text style={styles.errorText}>
+            Bet too large — you only have {credits.toLocaleString()} Credits
+          </Text>
+        )}
           <View style={styles.row}>
             <Pressable style={[styles.btn, styles.cancel]} onPress={onClose} disabled={submitting}>
               <Text style={styles.btnText}>Cancel</Text>
@@ -126,6 +155,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "flex-end",
   },
+  balance: { marginTop: 8, fontWeight: "700", color: "#111" },
+  afterBalance: { marginTop: 6, fontWeight: "600", color: "#444" },
+  errorText: { marginTop: 6, fontWeight: "600", color: "red" },
   sheet: {
     backgroundColor: "#fff",
     padding: 16,

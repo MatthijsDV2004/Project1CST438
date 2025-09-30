@@ -35,7 +35,7 @@ import {
 
 import PlaceBetSheet from "../../components/PlaceBetSheet";
 import { useSession } from "../../lib/sessionContext";
-
+import {decimalToAmerican} from "../../components/PlaceBetSheet";
 const SPORTS = [
   "all",
   // "soccer_epl",
@@ -300,7 +300,7 @@ export default function SportsBetExplorerPage() {
                         {market.outcomes?.map((o, idx) => (
                           <View key={`${book.key}-${market.key || mIdx}-${o.name}-${idx}`} style={styles.oddsCard}>
                             <Text>{o.name}</Text>
-                            <Text>@ {o.price}</Text>
+                            <Text>@ {decimalToAmerican(o.price)}</Text>
                             <Pressable
                               style={styles.oddsButton}
                               onPress={() => {
